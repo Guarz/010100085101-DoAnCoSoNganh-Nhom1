@@ -76,15 +76,22 @@ Route::post('/products', function(Request $request) {
         return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
     }
 });
-
 /**
  * 5. API XÓA SẢN PHẨM
  */
-Route::delete('/products/{id}', function($id) {
-    $deleted = DB::table('products')->where('product_id', $id)->delete();
-    
-    if ($deleted) {
-        return response()->json(['success' => true, 'message' => 'Đã xóa sản phẩm']);
+const deleteProduct = async (id) => {
+    if (confirm("Bạn có chắc chắn muốn xóa?")) {
+        try {
+            const response = await fetch(`http://localhost:8000/api/products/${id}`, {
+                method: 'DELETE'
+            });
+            const result = await response.json();
+            if (result.success) {
+                alert("Xóa thành công!");
+                fetchProducts(); // Hàm gọi lại danh sách để cập nhật giao diện
+            }
+        } catch (error) {
+            console.error("Lỗi xóa:", error);
+        }
     }
-    return response()->json(['success' => false, 'message' => 'Không tìm thấy sản phẩm'], 404);
-});
+};
