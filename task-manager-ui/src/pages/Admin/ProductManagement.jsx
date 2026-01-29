@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { initProducts, getProducts, saveProducts } from "../../data/productStorage";
+import axios from "axios";
 import ProductForm from "../../components/ProductForm";
 import ProductList from "../../components/ProductList";
 
@@ -8,26 +8,34 @@ export default function ProductManagement() {
     const [editing, setEditing] = useState(null);
 
     useEffect(() => {
-        initProducts();
-        setProducts(getProducts());
+        fetchProducts();
     }, []);
 
+    const fetchProducts = () => {
+        axios.get("http://127.0.0.1:8000/api/admin/products")
+            .then(res => setProducts(res.data))
+            .catch(err => console.error("Lỗi load sản phẩm:", err));
+    };
+
     const handleSave = (product) => {
-        let newProducts;
         if (editing) {
-            newProducts = products.map(p => p.id === product.id ? product : p);
+            axios.put(
+                `http://127.0.0.1:8000/api/admin/products/${product.id}`,
+                product
+            ).then(fetchProducts);
         } else {
-            newProducts = [...products, { ...product, id: Date.now() }];
+            axios.post(
+                "http://127.0.0.1:8000/api/admin/products",
+                product
+            ).then(fetchProducts);
         }
-        setProducts(newProducts);
-        saveProducts(newProducts);
         setEditing(null);
     };
 
     const handleDelete = (id) => {
-        const newProducts = products.filter(p => p.id !== id);
-        setProducts(newProducts);
-        saveProducts(newProducts);
+        axios.delete(
+            `http://127.0.0.1:8000/api/admin/products/${id}`
+        ).then(fetchProducts);
     };
 
     return (
