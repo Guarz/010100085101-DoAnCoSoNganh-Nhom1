@@ -4,6 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model; // Cần class này để kế thừa các tính năng của Laravel Model
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\AnhSP;
+use App\Models\LoaiSP;
+use App\Models\ChiTietSanPham;
+use App\Models\ChiTietGioHang;
+use App\Models\ChiTietDonHang;
 
 class SanPham extends Model
 {
