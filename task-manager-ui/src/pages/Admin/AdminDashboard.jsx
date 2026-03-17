@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import "../../style/dashboard.css";
 
 function AdminDashboard() {
 
@@ -14,70 +15,68 @@ function AdminDashboard() {
     });
 
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
 
     useEffect(() => {
 
-        axios
-            .get("http://127.0.0.1:8000/api/admin/dashboard")
-            .then((res) => {
-                setData(res.data);
-                setLoading(false);
-            })
-            .catch((err) => {
-                console.error(err);
-                setError("Không tải được dữ liệu dashboard");
-                setLoading(false);
-            });
+        // Lấy sản phẩm từ localStorage
+        const products = JSON.parse(localStorage.getItem("products")) || [];
+
+        // Fake dữ liệu cho dashboard
+        setData({
+            total_products: products.length,
+            total_categories: 3,
+            total_orders: 12,
+            total_users: 5
+        });
+
+        setLoading(false);
 
     }, []);
 
-    if (loading) {
-        return (
-            <div style={{ padding: 30 }}>
-                <h3>Đang tải dashboard...</h3>
-            </div>
-        );
-    }
+    const chartData = [
+        { name: "T1", orders: 40 },
+        { name: "T2", orders: 65 },
+        { name: "T3", orders: 30 },
+        { name: "T4", orders: 90 },
+        { name: "T5", orders: 55 },
+        { name: "T6", orders: 70 }
+    ];
 
-    if (error) {
-        return (
-            <div style={{ padding: 30, color: "red" }}>
-                {error}
-            </div>
-        );
+    if (loading) {
+        return <div className="dashboard-loading">Đang tải...</div>;
     }
 
     return (
-        <div style={{ padding: 30 }}>
 
-            <h2 style={{ marginBottom: 20 }}>📊 ADMIN DASHBOARD</h2>
+        <div className="admin-dashboard">
 
-            <div style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(200px,1fr))",
-                gap: 20
-            }}>
+            <h2 className="dashboard-title">📊 ADMIN DASHBOARD</h2>
+
+            <div className="dashboard-grid">
 
                 <StatBox
-                    title="Tổng sản phẩm"
+                    icon="📦"
+                    title="Sản phẩm"
                     value={data.total_products}
                     onClick={() => navigate("/admin/products")}
                 />
 
                 <StatBox
+                    icon="📂"
                     title="Danh mục"
                     value={data.total_categories}
                     onClick={() => navigate("/admin/categories")}
                 />
 
                 <StatBox
+                    icon="🧾"
                     title="Đơn hàng"
                     value={data.total_orders}
                     onClick={() => navigate("/admin/orders")}
                 />
 
                 <StatBox
+                    icon="👤"
                     title="Người dùng"
                     value={data.total_users}
                     onClick={() => navigate("/admin/users")}
@@ -85,41 +84,39 @@ function AdminDashboard() {
 
             </div>
 
+            <div className="chart-box">
+
+                <h3>📈 Thống kê đơn hàng</h3>
+
+                <ResponsiveContainer width="100%" height={300}>
+                    <BarChart data={chartData}>
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip />
+                        <Bar dataKey="orders" fill="#e91e63" />
+                    </BarChart>
+                </ResponsiveContainer>
+
+            </div>
+
         </div>
     );
 }
 
-function StatBox({ title, value, onClick }) {
+function StatBox({ icon, title, value, onClick }) {
 
     return (
-        <div
-            onClick={onClick}
-            style={{
-                background: "#fff",
-                padding: 25,
-                borderRadius: 10,
-                textAlign: "center",
-                boxShadow: "0 3px 10px rgba(0,0,0,0.1)",
-                cursor: "pointer",
-                transition: "0.2s"
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.05)"}
-            onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
-        >
 
-            <h3 style={{ marginBottom: 10 }}>{title}</h3>
+        <div className="stat-box" onClick={onClick}>
 
-            <p
-                style={{
-                    fontSize: 28,
-                    fontWeight: "bold",
-                    color: "#e91e63"
-                }}
-            >
-                {value}
-            </p>
+            <div className="stat-icon">{icon}</div>
+
+            <h3>{title}</h3>
+
+            <p className="stat-value">{value}</p>
 
         </div>
+
     );
 }
 

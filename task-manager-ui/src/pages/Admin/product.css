@@ -1,0 +1,80 @@
+.product-page{
+padding:30px;
+background:#f9beeb;
+}
+
+.product-form{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:15px;
+background:rgb(155, 238, 191);
+padding:25px;
+border-radius:15px;
+margin-bottom:20px;
+}
+
+.product-form input,
+.product-form select{
+padding:10px;
+border-radius:20px;
+border:1px solid #ccc;
+}
+
+.upload-box{
+grid-column: span 2;
+border:2px dashed #ccc;
+padding:20px;
+text-align:center;
+border-radius:10px;
+}
+
+.description{
+background:rgb(161, 200, 240);
+padding:20px;
+border-radius:15px;
+margin-bottom:20px;
+}
+
+.description input,
+.description textarea{
+width:100%;
+padding:10px;
+margin-top:10px;
+border-radius:10px;
+border:1px solid #ccc;
+}
+
+.add-btn{
+padding:12px 20px;
+background:#e91e63;
+color:white;
+border:none;
+border-radius:10px;
+cursor:pointer;
+margin-bottom:20px;
+}
+
+.product-list{
+background:rgb(244, 190, 238);
+padding:20px;
+border-radius:15px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+th, td{
+padding:10px;
+border-bottom:1px solid #eee;
+}
+
+button{
+padding:6px 10px;
+background:red;
+color:rgb(250, 179, 217);
+border:none;
+border-radius:5px;
+cursor:pointer;
+}
