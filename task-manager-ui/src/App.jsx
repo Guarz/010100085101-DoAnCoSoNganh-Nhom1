@@ -101,14 +101,14 @@
 // const productGridStyle = { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px,1fr))', gap: 20 };
 // const cardStyle = { background: '#fff', borderRadius: 10, overflow: 'hidden', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' };
 // const btnBuyStyle = { width: '100%', padding: 10, background: '#000', color: '#fff', border: 'none', cursor: 'pointer' };
-import ProductList from "./pages/User/ProductList"; // Đảm bảo đúng đường dẫn file của bạn
+// import ProductList from "./pages/User/ProductList"; // Đảm bảo đúng đường dẫn file của bạn
 
-function App() {
-  return (
-    <div className="App">
-      <ProductList />
-    </div>
-  );
-}
+// function App() {
+//   return (
+//     <div className="App">
+//       <ProductList />
+//     </div>
+//   );
+// }
 
-export default App;
+// export default App;

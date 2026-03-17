@@ -8,13 +8,13 @@
 //     <App />
 //   </StrictMode>,
 // )
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import ProductList from './pages/User/ProductList' // Import trực tiếp ProductList
-import './index.css' // Giữ lại CSS nếu bạn dùng Tailwind
+// import React from 'react'
+// import ReactDOM from 'react-dom/client'
+// import ProductList from './pages/User/ProductList'
+// import './index.css'
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <ProductList /> 
-  </React.StrictMode>,
-)
+// ReactDOM.createRoot(document.getElementById('root')).render(
+//   <React.StrictMode>
+//     <ProductList /> 
+//   </React.StrictMode>,
+// )
