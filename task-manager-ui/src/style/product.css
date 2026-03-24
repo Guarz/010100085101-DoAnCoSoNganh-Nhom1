@@ -1,89 +1,120 @@
 .product-page{
-padding:30px;
-background:#f3d1db;
-min-height:100vh;
+    padding:30px;
+    background:#f3d1db;
+    min-height:100vh;
+}
+
+/* 🔙 NÚT QUAY LẠI */
+.back-btn{
+    margin-bottom:20px;
+    padding:10px 15px;
+    background:#e4618d;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+    transition:0.3s;
+}
+
+.back-btn:hover{
+    background:#c2185b;
+    transform:scale(1.05);
 }
 
 .title{
-margin-bottom:20px;
+    margin-bottom:20px;
 }
 
 .product-card{
-background:rgb(166, 244, 204);
-padding:20px;
-border-radius:12px;
-box-shadow:0 3px 8px rgba(0,0,0,0.1);
-margin-bottom:30px;
+    background:rgb(166, 244, 204);
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 3px 8px rgba(0,0,0,0.1);
+    margin-bottom:30px;
 }
 
 .form-grid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:12px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
 }
 
 .form-grid input{
-padding:10px;
-border:1px solid #ccc;
-border-radius:8px;
+    padding:10px;
+    border:1px solid #ccc;
+    border-radius:8px;
 }
 
 .desc-box{
-margin-top:15px;
-display:flex;
-flex-direction:column;
-gap:10px;
+    margin-top:15px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
 }
 
 .desc-box input,
 .desc-box textarea{
-padding:10px;
-border-radius:8px;
-border:1px solid #ccc;
+    padding:10px;
+    border-radius:8px;
+    border:1px solid #ccc;
 }
 
 .add-btn{
-margin-top:15px;
-padding:10px 20px;
-background:#e91e63;
-color:white;
-border:none;
-border-radius:8px;
-cursor:pointer;
+    margin-top:15px;
+    padding:10px 20px;
+    background:#e91e63;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.add-btn:hover{
+    background:#c2185b;
 }
 
 .product-list{
-background:rgb(179, 211, 238);
-padding:20px;
-border-radius:12px;
+    background:rgb(179, 211, 238);
+    padding:20px;
+    border-radius:12px;
 }
 
 table{
-width:100%;
-border-collapse:collapse;
+    width:100%;
+    border-collapse:collapse;
 }
 
 th,td{
-padding:12px;
-border-bottom:1px solid #ddd;
-text-align:center;
+    padding:12px;
+    border-bottom:1px solid #ddd;
+    text-align:center;
 }
 
 .edit-btn{
-background:orange;
-color:white;
-border:none;
-padding:5px 10px;
-border-radius:6px;
-margin-right:5px;
-cursor:pointer;
+    background:orange;
+    color:white;
+    border:none;
+    padding:5px 10px;
+    border-radius:6px;
+    margin-right:5px;
+    cursor:pointer;
+}
+
+.edit-btn:hover{
+    opacity:0.8;
 }
 
 .delete-btn{
-background:red;
-color:rgb(239, 178, 214);
-border:none;
-padding:5px 10px;
-border-radius:6px;
-cursor:pointer;
+    background:red;
+    color:white;
+    border:none;
+    padding:5px 10px;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.delete-btn:hover{
+    opacity:0.8;
 }
