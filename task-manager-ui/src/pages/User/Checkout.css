@@ -1,0 +1,32 @@
+
+.qr-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1050;
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.3s ease;
+}
+
+.qr-modal-content {
+    background: #fff;
+    max-width: 450px;
+    width: 90%;
+    border-top: 6px solid #d81b60; 
+    animation: slideDown 0.4s ease;
+}
+
+.qr-image-wrapper {
+    border: 2px dashed #d81b60 !important; 
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}

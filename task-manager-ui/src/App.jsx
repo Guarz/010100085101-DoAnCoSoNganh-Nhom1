@@ -11,7 +11,7 @@ import CartPage from "./pages/CartPage";
 import UserOrders from "./pages/User/UserOrders";
 import UserProductDetail from "./pages/User/ProductDetail";
 import ProductList from "./pages/User/ProductList";
-
+import Checkout from './pages/User/Checkout';
 // Pages ADMIN
 import AdminHome from "./pages/Admin/AdminHome";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
@@ -45,6 +45,7 @@ function App() {
           <Route path="/home" element={<HomePage />} />
           <Route path="/products" element={<ProductList />} />
           <Route path="/product/:id" element={<UserProductDetail />} />
+          <Route path="/checkout" element={<Checkout />} />
           <Route path="/cart" element={<CartPage />} />
           <Route 
             path="/orders" 

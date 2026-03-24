@@ -1,0 +1,32 @@
+
+.product-detail-name {
+    color: #d81b60;
+    font-weight: 800;
+}
+
+/* Giá tiền sản phẩm */
+.text-danger.fw-bold {
+    color: #d81b60 !important;
+}
+
+.btn-danger.btn-lg {
+    background-color: #d81b60;
+    border: none;
+    transition: 0.3s;
+}
+
+.btn-danger.btn-lg:hover {
+    background-color: #b0144d;
+    box-shadow: 0 5px 15px rgba(216, 27, 96, 0.4);
+}
+
+/* Nút quay lại danh sách */
+.btn-outline-danger {
+    color: #d81b60;
+    border-color: #d81b60;
+}
+
+.btn-outline-danger:hover {
+    background-color: #d81b60;
+    color: white;
+}

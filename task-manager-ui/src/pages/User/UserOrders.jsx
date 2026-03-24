@@ -17,7 +17,6 @@ const UserOrders = () => {
 
     const fetchOrders = async () => {
         try {
-            // Gọi API lấy đơn hàng (Bạn cần đảm bảo Route này đã tồn tại trong api.php)
             const response = await axios.get(`http://127.0.0.1:8000/api/orders/${user.id}`);
             setOrders(response.data); 
             setLoading(false);
@@ -31,7 +30,7 @@ const UserOrders = () => {
 
     return (
         <div style={{ maxWidth: 1000, margin: '0 auto', padding: '20px 0' }}>
-            <h2 style={{ marginBottom: 20 }}>Đơn hàng đã giao</h2>
+            <h2 style={{ marginBottom: 20 }}>Đơn hàng của bạn</h2>
 
             {orders.length === 0 ? (
                 <div style={styles.emptyBox}>
@@ -40,35 +39,36 @@ const UserOrders = () => {
             ) : (
                 orders.map((order) => (
                     <div key={order.IdDH} style={styles.orderCard}>
-                        {/* Header: Mã đơn hàng & Trạng thái */}
+
                         <div style={styles.orderHeader}>
                             <span style={{ fontWeight: 'bold' }}>Mã đơn: #{order.IdDH}</span>
                             <span style={{ color: themeColor }}>{order.TrangThai || 'Chờ xác nhận'}</span>
                         </div>
 
-                        {/* Danh sách sản phẩm - Dựa trên cấu trúc ChiTietGioHang/SanPham */}
-                        {order.details && order.details.map((item, idx) => (
-                            <div key={idx} style={styles.productRow}>
-                                <div style={{ display: 'flex', flex: 1 }}>
-                                    {/* Lấy ảnh từ Quan hệ AnhSP */}
-                                    <img 
-                                        src={item.san_pham?.anh_s_p?.[0]?.HinhAnh || 'https://via.placeholder.com/80'} 
-                                        alt="Product" 
-                                        style={styles.productImg} 
-                                    />
-                                    <div style={{ marginLeft: 15 }}>
-                                        {/* Tên sản phẩm từ Model SanPham */}
-                                        <div style={{ fontWeight: '500' }}>{item.san_pham?.TenSP}</div>
-                                        <div style={{ color: '#888', fontSize: 13 }}>Số lượng: x{item.SoLuong}</div>
+                        {/* Danh sách sản phẩm */}
+                            {order.details && order.details.map((item, idx) => (
+                                <div key={idx} style={styles.productRow}>
+                                    <div style={{ display: 'flex', flex: 1 }}>
+                          
+                                        <img 
+                                            src={item.HinhAnh || 'https://via.placeholder.com/80'} 
+                                            alt={item.TenSP || "Product"} 
+                                            style={styles.productImg} 
+                                        />
+                                        
+                                        <div style={{ marginLeft: 15 }}>
+                    
+                                            <div style={{ fontWeight: '500' }}>{item.TenSP}</div>
+                                            <div style={{ color: '#888', fontSize: 13 }}>Số lượng: x{item.SoLuong}</div>
+                                        </div>
+                                        
+                                    </div>
+                                    <div style={{ fontWeight: 'bold' }}>
+                                        {Number(item.GiaBan).toLocaleString()}₫
                                     </div>
                                 </div>
-                                <div style={{ fontWeight: 'bold' }}>
-                                    {Number(item.GiaBan).toLocaleString()}₫
-                                </div>
-                            </div>
-                        ))}
+                            ))}
 
-                        {/* Tổng tiền đơn hàng */}
                         <div style={styles.orderFooter}>
                             <div>
                                 <span style={{ color: '#888' }}>Tổng số tiền: </span>
