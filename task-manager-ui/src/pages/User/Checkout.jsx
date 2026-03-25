@@ -14,9 +14,9 @@ const Checkout = () => {
     const [showQRModal, setShowQRModal] = useState(false);
 
     useEffect(() => {
-    const selectedItems = JSON.parse(localStorage.getItem('checkout_items')) || [];
-    setCartItems(selectedItems);
-}, []);
+        const selectedItems = JSON.parse(localStorage.getItem('checkout_items')) || [];
+        setCartItems(selectedItems);
+    }, []);
 
     const totalAmount = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
 
@@ -40,44 +40,50 @@ const Checkout = () => {
         }
     };
 
-   const completeOrder = async () => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    
-    if (!user || !user.id) {
-        alert("Lỗi: Bạn chưa đăng nhập!");
-        return;
-    }
+    const completeOrder = async () => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        
+        if (!user || !user.id) {
+            alert("Lỗi: Bạn chưa đăng nhập!");
+            return;
+        }
 
-    const orderPayload = {
-        IdUser: user.id,
-        DiaChiDat: formData.address,
-        TongTien: totalAmount, 
-        IdPT: paymentMethod === 'COD' ? 1 : 2,
-        fullName: formData.fullName,
-        phone: formData.phone,
-        note: formData.note || "",
-        ChiTietDonHang: cartItems.map(item => ({
-            IdSP: item.IdSP || item.id,
-            SoLuong: item.quantity
-        }))
+        const orderPayload = {
+            IdUser: user.id,
+            DiaChiDat: formData.address,
+            TongTien: totalAmount, 
+            IdPT: paymentMethod === 'COD' ? 1 : 2,
+            fullName: formData.fullName,
+            phone: formData.phone,
+            note: formData.note || "",
+            ChiTietDonHang: cartItems.map(item => ({
+                IdSP: item.IdSP || item.id,
+                SoLuong: item.quantity,
+                Gia: item.price // Đã thêm trường Giá để gửi sang Backend
+            }))
+        };
+
+        try {
+            const response = await axios.post('http://127.0.0.1:8000/api/orders', orderPayload);
+            
+            if (response.data.status === 'success') {
+                alert("✅ ĐẶT HÀNG THÀNH CÔNG!");
+                localStorage.removeItem('cart');
+                localStorage.removeItem('checkout_items');
+                setCart([]);
+                navigate('/orders');
+            }
+        } catch (error) {
+            console.error("Lỗi:", error.response?.data);
+            alert("Lỗi: " + (error.response?.data?.message || "Không thể thanh toán"));
+        }
     };
 
-    try {
-        const response = await axios.post('http://127.0.0.1:8000/api/orders', orderPayload);
-        
-        if (response.data.status === 'success') {
-            alert("✅ ĐẶT HÀNG THÀNH CÔNG!");
-            localStorage.removeItem('cart');
-            localStorage.removeItem('checkout_items');
-            setCart([]);
-            navigate('/orders');
-        }
-    } catch (error) {
-  
-        console.error("Lỗi:", error.response?.data);
-        alert("Lỗi: " + (error.response?.data?.message || "Không thể thanh toán"));
-    }
-};
+    // THÔNG TIN TÀI KHOẢN NGÂN HÀNG DEMO
+    const BANK_ID = "970436"; // Mã Vietcombank (Có thể tra mã khác trên vietqr.io)
+    const ACCOUNT_NO = "0123456789"; // Số tài khoản của bạn
+    const ACCOUNT_NAME = "NGUYEN VAN A"; // Tên chủ tài khoản (viết hoa không dấu)
+    const DESCRIPTION = `ThanhToan_${formData.phone}`; // Nội dung chuyển tiền
 
     return (
         <div className="container mt-5 pb-5 checkout-page relative">
@@ -89,12 +95,12 @@ const Checkout = () => {
                         <h4 className="fw-bold mb-3" style={{color: '#d81b60'}}>Quét mã QR để thanh toán</h4>
                         <p className="text-muted mb-4">
                             Vui lòng sử dụng App ngân hàng hoặc Ví điện tử để quét mã. <br/>
-                            Nội dung chuyển khoản: <strong className="text-dark">ThanhToan_{formData.phone}</strong>
+                            Nội dung chuyển khoản: <strong className="text-dark">{DESCRIPTION}</strong>
                         </p>
                        
                         <div className="qr-image-wrapper mb-4 p-3 border rounded d-inline-block bg-white shadow-sm">
                             <img 
-                                src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=ChuyenKhoanGiaLap_${totalAmount}_VND`} 
+                                src={`https://img.vietqr.io/image/${BANK_ID}-${ACCOUNT_NO}-compact2.jpg?amount=${totalAmount}&addInfo=${DESCRIPTION}&accountName=${ACCOUNT_NAME}`} 
                                 alt="QR Code Thanh Toán" 
                                 className="img-fluid"
                             />
