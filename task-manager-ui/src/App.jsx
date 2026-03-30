@@ -4,17 +4,19 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-// Layouts
+// Layout
 import UserLayout from "./layouts/UserLayout";
 
-// Pages Auth
+// USER AUTH
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
 
-// Pages USER
-// import Login from "./pages/Login";
+// ADMIN AUTH
+import AdminLogin from "./pages/Admin/AdminLogin";
+
+// USER PAGES
 import HomePage from "./pages/User/HomePage";
 import CartPage from "./pages/CartPage";
 import UserOrders from "./pages/User/UserOrders";
@@ -23,7 +25,7 @@ import ProductList from "./pages/User/ProductList";
 import Checkout from "./pages/User/Checkout";
 import Profile from "./pages/User/Profile";
 
-// Pages ADMIN
+// ADMIN PAGES
 import AdminHome from "./pages/Admin/AdminHome";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import ProductManagement from "./pages/Admin/ProductManagement";
@@ -32,79 +34,140 @@ import AdminOrders from "./pages/Admin/AdminOrders";
 import CategoryManagement from "./pages/Admin/CategoryManagement";
 
 function App() {
-  const [user, setUser] = useState(() => {
-    const u = localStorage.getItem("user");
-    return u ? JSON.parse(u) : null;
-  });
 
-  // ✅ CHECK ADMIN
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  /*
+  ========================
+  LOAD USER
+  ========================
+  */
+
+  useEffect(() => {
+
+    const savedUser = localStorage.getItem("user");
+
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+
+    setLoading(false);
+
+  }, []);
+
+  if (loading) {
+    return <h3 style={{ textAlign: "center", marginTop: 50 }}>Loading...</h3>;
+  }
+
   const isAdmin = user?.role === "admin";
 
   return (
+
     <Router>
+
       <Routes>
+
         {/* ================= USER ================= */}
+
         <Route element={<UserLayout user={user} setUser={setUser} />}>
+
           <Route path="/" element={<HomePage />} />
           <Route path="/home" element={<HomePage />} />
+
           <Route path="/products" element={<ProductList />} />
           <Route path="/product/:id" element={<UserProductDetail />} />
+
           <Route path="/cart" element={<CartPage />} />
           <Route path="/checkout" element={<Checkout />} />
+
           <Route path="/login" element={<Login setUser={setUser} />} />
           <Route path="/register" element={<Register />} />
 
           <Route
             path="/profile"
-            element={user ? <Profile /> : <Navigate to="/login" replace />}
+            element={user ? <Profile /> : <Navigate to="/login" />}
           />
+
           <Route
             path="/orders"
-            element={user ? <UserOrders /> : <Navigate to="/login" replace />}
+            element={user ? <UserOrders /> : <Navigate to="/login" />}
           />
+
         </Route>
 
-        {/* ================= ADMIN ================= */}
+
+        {/* ================= ADMIN LOGIN ================= */}
 
         <Route
-          path="/admin"
+          path="/admin/login"
           element={
-            isAdmin ? <AdminDashboard /> : <Navigate to="/login" replace />
+            isAdmin
+              ? <Navigate to="/admin/dashboard" />
+              : <AdminLogin setUser={setUser} />
+          }
+        />
+
+
+        {/* ================= ADMIN PAGES ================= */}
+
+        <Route
+          path="/admin/dashboard"
+          element={
+            isAdmin
+              ? <AdminDashboard />
+              : <Navigate to="/admin/login" />
           }
         />
 
         <Route
           path="/admin/home"
-          element={isAdmin ? <AdminHome /> : <Navigate to="/login" replace />}
+          element={
+            isAdmin
+              ? <AdminHome />
+              : <Navigate to="/admin/login" />
+          }
         />
 
         <Route
           path="/admin/products"
           element={
-            isAdmin ? <ProductManagement /> : <Navigate to="/login" replace />
+            isAdmin
+              ? <ProductManagement />
+              : <Navigate to="/admin/login" />
           }
         />
 
         <Route
           path="/admin/product/:id"
           element={
-            isAdmin ? <ProductDetail /> : <Navigate to="/login" replace />
+            isAdmin
+              ? <ProductDetail />
+              : <Navigate to="/admin/login" />
           }
         />
 
         <Route
           path="/admin/orders"
-          element={isAdmin ? <AdminOrders /> : <Navigate to="/login" replace />}
+          element={
+            isAdmin
+              ? <AdminOrders />
+              : <Navigate to="/admin/login" />
+          }
         />
 
         <Route
           path="/admin/categories"
           element={
-            isAdmin ? <CategoryManagement /> : <Navigate to="/login" replace />
+            isAdmin
+              ? <CategoryManagement />
+              : <Navigate to="/admin/login" />
           }
         />
 
+
         {/* ================= 404 ================= */}
+
         <Route
           path="*"
           element={
@@ -113,9 +176,13 @@ function App() {
             </h2>
           }
         />
+
       </Routes>
+
     </Router>
+
   );
+
 }
 
 export default App;

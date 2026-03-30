@@ -14,34 +14,29 @@ const Login = ({ setUser }) => {
     setError("");
 
     try {
-      // Gọi API đến Backend Laravel
       const response = await axios.post("http://127.0.0.1:8000/api/login", {
         email: email,
         password: password,
       });
 
-      if (response.data.status === "success") {
+      if (response.data.success) {
         const userData = response.data.user;
 
-        // 1. Lưu thông tin user vào localStorage để duy trì phiên đăng nhập
-        localStorage.setItem("user", JSON.stringify(userData));
-        
-        // 2. Cập nhật state setUser để App.jsx nhận biết isAdmin
-        setUser(userData);
-
-        // 3. LOGIC CHUYỂN HƯỚNG QUAN TRỌNG:
-        // Nếu là admin thì vào trang quản trị, ngược lại về trang chủ khách hàng
+        // 🔥 BƯỚC CHẶN QUAN TRỌNG: Kiểm tra nếu là Admin
         if (userData.role === "admin") {
-          navigate("/admin");
-        } else {
-          navigate("/");
+          setError("Tài khoản này thuộc quyền quản trị. Vui lòng đăng nhập tại trang Admin.");
+          return; // Dừng xử lý, không lưu vào localStorage và không setUser
         }
+
+        // Nếu là User bình thường thì mới tiếp tục
+        localStorage.setItem("user", JSON.stringify(userData));
+        setUser(userData);
+        navigate("/"); // Luôn về trang chủ user
       }
     } catch (err) {
       console.error(err);
-      // Hiển thị lỗi từ backend hoặc lỗi kết nối
       setError(
-        err.response?.data?.message || "Không thể kết nối đến máy chủ. Hãy kiểm tra Backend!"
+        err.response?.data?.message || "Không thể kết nối đến máy chủ"
       );
     }
   };
@@ -51,6 +46,7 @@ const Login = ({ setUser }) => {
       <div className="login-card shadow-lg">
         <div className="login-left d-none d-md-flex">
           <div className="text-center">
+            {/* Bạn nên thay link ảnh này bằng ảnh thật trong folder assets của bạn */}
             <img
               src="https://via.placeholder.com/300x400/ffebee/d63384?text=Fashion+Shop"
               alt="Fashion"
@@ -66,14 +62,12 @@ const Login = ({ setUser }) => {
         <div className="login-right">
           <div className="form-header">
             <h2 className="login-title">Đăng Nhập</h2>
-            <p className="text-muted">Vui lòng nhập thông tin của bạn</p>
+            <p className="text-muted">Vui lòng nhập thông tin khách hàng</p>
           </div>
 
+          {/* Hiển thị lỗi nếu có (bao gồm cả lỗi chặn admin) */}
           {error && (
-            <div
-              className="alert alert-danger py-2 small text-center"
-              role="alert"
-            >
+            <div className="alert alert-danger py-2 small text-center shadow-sm">
               {error}
             </div>
           )}
@@ -84,7 +78,7 @@ const Login = ({ setUser }) => {
               <input
                 type="email"
                 className="form-control custom-input"
-                placeholder="admin@gmail.com"
+                placeholder="Nhập email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -103,16 +97,6 @@ const Login = ({ setUser }) => {
               />
             </div>
 
-            <div className="d-flex justify-content-between align-items-center mb-4">
-              <Link
-                to="/forgot-password"
-                style={{ color: "#d63384" }}
-                className="small fw-bold"
-              >
-                Quên mật khẩu?
-              </Link>
-            </div>
-
             <button type="submit" className="btn-login-submit">
               TIẾP TỤC
             </button>
@@ -121,11 +105,7 @@ const Login = ({ setUser }) => {
           <div className="text-center mt-4">
             <p className="small text-muted">
               Chưa có tài khoản?{" "}
-              <Link
-                to="/register"
-                style={{ color: "#d63384" }}
-                className="fw-bold"
-              >
+              <Link to="/register" style={{ color: "#d63384" }} className="fw-bold">
                 Tạo tài khoản mới
               </Link>
             </p>

@@ -8,107 +8,168 @@ use App\Models\User;
 
 class AuthController extends Controller
 {
-    /**
-     * Xử lý Đăng nhập & Phân quyền dựa trên Email
-     */
+
+    /*
+    =====================================
+    LOGIN
+    =====================================
+    */
+
     public function login(Request $request)
     {
+
         $request->validate([
             'email' => 'required|email',
-            'password' => 'required',
+            'password' => 'required'
         ]);
 
-        // Tìm user theo cột Email (khớp với Database của bạn)
+        // tìm user theo email
         $user = User::where('Email', $request->email)->first();
 
-        // Kiểm tra user và so sánh mật khẩu thô (VD: 123456)
-        if ($user && $request->password === $user->Password) {
-
-            /** * PHÂN QUYỀN TRỰC TIẾP TRONG CODE
-             * Nếu email là admin@gmail.com thì gắn role là admin.
-             * Tất cả các email còn lại sẽ có role là user.
-             */
-            $role = ($user->Email === 'admin@gmail.com') ? 'admin' : 'user';
+        if (!$user) {
 
             return response()->json([
-                'status' => 'success',
-                'user' => [
-                    'id' => $user->IdUser,
-                    'name' => $user->Ten,
-                    'email' => $user->Email,
-                    'role' => $role,
-                ],
-            ], 200);
+                "success" => false,
+                "message" => "Email không tồn tại"
+            ], 404);
+
+        }
+
+        // kiểm tra mật khẩu
+        if ($request->password !== $user->Password) {
+
+            return response()->json([
+                "success" => false,
+                "message" => "Mật khẩu không đúng"
+            ], 401);
+
+        }
+
+        /*
+        =========================
+        PHÂN QUYỀN
+        =========================
+        */
+
+        $role = "user";
+
+        if ($user->Email === "admin@gmail.com") {
+            $role = "admin";
         }
 
         return response()->json([
-            'status' => 'error',
-            'message' => 'Email hoặc mật khẩu không chính xác'
-        ], 401);
-    }
-
-    /**
-     * Xử lý Đăng ký (Mặc định là user)
-     */
-    public function register(Request $request)
-    {
-        $request->validate([
-            'ten' => 'required|string|max:255',
-            'email' => 'required|email|unique:user,Email', // Kiểm tra trùng email trong bảng user
-            'password' => 'required',
+            "success" => true,
+            "message" => "Đăng nhập thành công",
+            "user" => [
+                "id" => $user->IdUser,
+                "name" => $user->Ten,
+                "email" => $user->Email,
+                "address" => $user->DiaChi,
+                "phone" => $user->DienThoai,
+                "role" => $role
+            ]
         ]);
 
-        // Tạo user mới với mật khẩu thô
+    }
+
+
+
+    /*
+    =====================================
+    REGISTER
+    =====================================
+    */
+
+    public function register(Request $request)
+    {
+
+        $request->validate([
+            'ten' => 'required|string|max:255',
+            'email' => 'required|email|unique:user,Email',
+            'password' => 'required|min:3'
+        ]);
+
         $user = User::create([
-            'Ten' => $request->ten,
-            'Email' => $request->email,
-            'Password' => $request->password,
-            'NgayTao' => now(),
+            "Ten" => $request->ten,
+            "Email" => $request->email,
+            "Password" => $request->password,
+            "NgayTao" => now()
         ]);
 
         return response()->json([
-            'status' => 'success',
-            'message' => 'Đăng ký thành công!',
-        ], 201);
+            "success" => true,
+            "message" => "Đăng ký thành công",
+            "user" => [
+                "id" => $user->IdUser,
+                "name" => $user->Ten,
+                "email" => $user->Email,
+                "role" => "user"
+            ]
+        ]);
+
     }
 
-    /**
-     * Cập nhật thông tin cá nhân
-     */
+
+
+    /*
+    =====================================
+    UPDATE PROFILE
+    =====================================
+    */
+
     public function updateProfile(Request $request, $id)
     {
+
         $request->validate([
             'ten' => 'required|string|max:255',
             'email' => 'required|email|unique:user,Email,' . $id . ',IdUser',
             'diachi' => 'nullable|string|max:255',
-            'dienthoai' => 'nullable|string|max:15',
+            'dienthoai' => 'nullable|string|max:15'
         ]);
 
-        $user = User::where('IdUser', $id)->first();
+        $user = User::where("IdUser", $id)->first();
 
         if (!$user) {
-            return response()->json(['message' => 'Không tìm thấy người dùng'], 404);
+
+            return response()->json([
+                "success" => false,
+                "message" => "Không tìm thấy người dùng"
+            ], 404);
+
         }
 
-        // Cập nhật các trường viết hoa khớp với DB
         $user->Ten = $request->ten;
         $user->Email = $request->email;
         $user->DiaChi = $request->diachi;
         $user->DienThoai = $request->dienthoai;
+
         $user->save();
 
+        /*
+        =========================
+        PHÂN QUYỀN
+        =========================
+        */
+
+        $role = "user";
+
+        if ($user->Email === "admin@gmail.com") {
+            $role = "admin";
+        }
+
         return response()->json([
-            'status' => 'success',
-            'message' => 'Cập nhật thành công!',
-            'user' => [
-                'id' => $user->IdUser,
-                'name' => $user->Ten,
-                'email' => $user->Email,
-                'address' => $user->DiaChi,
-                'phone' => $user->DienThoai,
-                // Vẫn giữ logic phân quyền khi trả về thông tin cập nhật
-                'role' => ($user->Email === 'admin@gmail.com') ? 'admin' : 'user'
+            "success" => true,
+            "message" => "Cập nhật thành công",
+            "user" => [
+                "id" => $user->IdUser,
+                "name" => $user->Ten,
+                "email" => $user->Email,
+                "address" => $user->DiaChi,
+                "phone" => $user->DienThoai,
+                "role" => $role
             ]
-        ], 200);
+        ]);
+
     }
+
 }

@@ -1,0 +1,178 @@
+/* Toàn bộ trang */
+.admin-login-container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #fff5f8 0%, #ffffff 100%);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 20px;
+}
+
+/* Card đăng nhập chính */
+.admin-login-card {
+    display: flex;
+    background: white;
+    width: 100%;
+    max-width: 900px;
+    min-height: 520px;
+    border-radius: 30px;
+    /* Bo góc hiện đại */
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(255, 64, 129, 0.12);
+    border: 1px solid #fff0f5;
+}
+
+/* PHẦN BÊN TRÁI: Thương hiệu */
+.admin-login-left {
+    flex: 1;
+    background: #ff4081;
+    /* Hồng chủ đạo Shop Quần Áo A */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    color: white;
+    text-align: center;
+    position: relative;
+}
+
+.admin-login-left::before {
+    content: "";
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    top: -50px;
+    left: -50px;
+}
+
+.brand-icon {
+    width: 120px;
+    height: auto;
+    margin-bottom: 25px;
+    filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.1));
+    z-index: 1;
+}
+
+.brand-content h1 {
+    font-size: 26px;
+    font-weight: 800;
+    margin-bottom: 10px;
+    letter-spacing: -0.5px;
+    z-index: 1;
+}
+
+/* PHẦN BÊN PHẢI: Form đăng nhập */
+.admin-login-right {
+    flex: 1.2;
+    padding: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.form-header h2 {
+    font-size: 32px;
+    color: #ff4081;
+    margin-bottom: 10px;
+    font-weight: 800;
+}
+
+/* Cấu trúc Input Group - Sửa lỗi chữ bị đè */
+.input-group {
+    margin-bottom: 25px;
+    display: flex;
+    flex-direction: column;
+    /* Ép label ở trên, input ở dưới */
+    align-items: flex-start;
+}
+
+.input-group label {
+    display: block;
+    font-weight: 700;
+    /* Độ dày chữ giống image_885f21.png */
+    margin-bottom: 10px;
+    color: #333;
+    font-size: 15px;
+    letter-spacing: 0.2px;
+}
+
+/* Password Wrapper đảm bảo thanh nhập chiếm 100% chiều ngang */
+.password-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 16px 20px;
+    border-radius: 12px;
+    border: 2px solid #f3f3f3;
+    background: #fdfdfd;
+    transition: all 0.3s ease;
+    font-size: 15px;
+    color: #444;
+    box-sizing: border-box;
+    /* Ngăn chặn tràn viền */
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #ff4081;
+    background: white;
+    box-shadow: 0 0 0 5px rgba(255, 64, 129, 0.08);
+}
+
+/* Icon mắt nằm bên trong thanh nhập */
+.toggle-password {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 20px;
+    color: #ff4081;
+    opacity: 0.7;
+    z-index: 10;
+}
+
+/* Nút đăng nhập */
+.btn-admin-submit {
+    width: 100%;
+    padding: 16px;
+    background: #ff4081;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 10px 20px rgba(255, 64, 129, 0.25);
+    margin-top: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-admin-submit:hover {
+    background: #e91e63;
+    transform: translateY(-2px);
+    box-shadow: 0 15px 30px rgba(255, 64, 129, 0.35);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .admin-login-card {
+        flex-direction: column;
+        max-width: 450px;
+        height: auto;
+    }
+
+    .admin-login-left,
+    .admin-login-right {
+        padding: 40px 30px;
+    }
+}
