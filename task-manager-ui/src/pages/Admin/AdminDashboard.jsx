@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import {
     BarChart,
     Bar,
@@ -13,9 +14,12 @@ import {
 import "../../style/dashboard.css";
 
 function AdminDashboard() {
+
     const navigate = useNavigate();
+
     const [loading, setLoading] = useState(true);
     const [isAuthorized, setIsAuthorized] = useState(false);
+
     const [data, setData] = useState({
         total_products: 0,
         total_categories: 0,
@@ -24,11 +28,10 @@ function AdminDashboard() {
     });
 
     useEffect(() => {
-        // 1. Kiểm tra quyền truy cập ngay khi vào trang
+
         const storedUser = localStorage.getItem("user");
 
         if (!storedUser) {
-            // Nếu không có user, dùng window.location để reset sạch state
             window.location.href = "/admin/login";
             return;
         }
@@ -40,34 +43,62 @@ function AdminDashboard() {
             return;
         }
 
-        // 2. Nếu hợp lệ thì mới cấp quyền hiển thị
         setIsAuthorized(true);
 
-        // Lấy dữ liệu từ localStorage
-        const products = JSON.parse(localStorage.getItem("products")) || [];
-        const categories = JSON.parse(localStorage.getItem("categories")) || [];
+        /*
+        ==========================
+        LẤY DỮ LIỆU TỪ API
+        ==========================
+        */
 
-        setData({
-            total_products: products.length,
-            total_categories: categories.length,
-            total_orders: 25, 
-            total_users: 10   
-        });
+        axios
+            .get("http://127.0.0.1:8000/api/admin/dashboard")
+            .then((res) => {
 
-        // 3. Tắt loading sau 500ms
-        const timer = setTimeout(() => setLoading(false), 500);
-        return () => clearTimeout(timer);
+                setData({
+                    total_products: res.data.totalProducts,
+                    total_categories: res.data.totalCategories,
+                    total_orders: res.data.totalOrders,
+                    total_users: res.data.totalUsers
+                });
 
-    }, []); // Chỉ chạy 1 lần khi component mount
+                setLoading(false);
 
-    // 🔥 HÀM ĐĂNG XUẤT ĐÃ SỬA LỖI
+            })
+            .catch((err) => {
+
+                console.error(err);
+                setLoading(false);
+
+            });
+
+    }, []);
+
+
+    /*
+    ==========================
+    LOGOUT
+    ==========================
+    */
+
     const handleLogout = () => {
+
         if (window.confirm("Bạn có chắc chắn muốn đăng xuất không?")) {
+
             localStorage.removeItem("user");
-            // Thay vì navigate, ta dùng window.location.href để xoá sạch mọi state cũ
+
             window.location.href = "/admin/login";
+
         }
+
     };
+
+
+    /*
+    ==========================
+    CHART DATA
+    ==========================
+    */
 
     const chartData = [
         { name: "T1", orders: 40 },
@@ -78,33 +109,48 @@ function AdminDashboard() {
         { name: "T6", orders: 70 }
     ];
 
-    // Ngăn chặn render nội dung nếu chưa xác thực hoặc đang tải
+
     if (!isAuthorized || loading) {
+
         return (
             <div className="dashboard-loading">
                 <div className="spinner"></div>
                 <h3 style={{ marginTop: '20px', color: '#666' }}>
-                    Đang bảo mật hệ thống...
+                    Đang tải dữ liệu...
                 </h3>
             </div>
         );
+
     }
 
+
     return (
+
         <div className="admin-dashboard">
+
             {/* HEADER */}
+
             <header className="dashboard-header">
+
                 <div className="header-left">
                     <h2 className="dashboard-title">📊 HỆ THỐNG QUẢN TRỊ</h2>
-                    <p className="dashboard-subtitle">Chào mừng Quản trị viên quay trở lại</p>
+                    <p className="dashboard-subtitle">
+                        Chào mừng Quản trị viên quay trở lại
+                    </p>
                 </div>
+
                 <button className="logout-btn" onClick={handleLogout}>
                     Đăng xuất
                 </button>
+
             </header>
 
-            {/* STATISTICS GRID */}
+
+
+            {/* STATISTICS */}
+
             <div className="dashboard-grid">
+
                 <StatBox
                     icon="📦"
                     label="Sản phẩm"
@@ -112,6 +158,7 @@ function AdminDashboard() {
                     color="#4318FF"
                     onClick={() => navigate("/admin/products")}
                 />
+
                 <StatBox
                     icon="📂"
                     label="Danh mục"
@@ -119,6 +166,7 @@ function AdminDashboard() {
                     color="#6AD2FF"
                     onClick={() => navigate("/admin/categories")}
                 />
+
                 <StatBox
                     icon="🧾"
                     label="Đơn hàng"
@@ -126,21 +174,41 @@ function AdminDashboard() {
                     color="#FF4081"
                     onClick={() => navigate("/admin/orders")}
                 />
+
                 <StatBox
                     icon="👤"
                     label="Người dùng"
                     value={data.total_users}
                     color="#422AFB"
                 />
+
             </div>
 
-            {/* CHART SECTION */}
+
+
+            {/* CHART */}
+
             <div className="chart-box">
-                <h3 className="chart-title">📈 Biểu đồ tăng trưởng đơn hàng</h3>
+
+                <h3 className="chart-title">
+                    📈 Biểu đồ tăng trưởng đơn hàng
+                </h3>
+
                 <div style={{ width: "100%", height: 350 }}>
+
                     <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+
+                        <BarChart
+                            data={chartData}
+                            margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                        >
+
+                            <CartesianGrid
+                                strokeDasharray="3 3"
+                                vertical={false}
+                                stroke="#f0f0f0"
+                            />
+
                             <XAxis
                                 dataKey="name"
                                 axisLine={false}
@@ -148,45 +216,79 @@ function AdminDashboard() {
                                 tick={{ fill: '#a3aed0', fontSize: 12 }}
                                 dy={10}
                             />
+
                             <YAxis
                                 axisLine={false}
                                 tickLine={false}
                                 tick={{ fill: '#a3aed0', fontSize: 12 }}
                             />
+
                             <Tooltip
                                 cursor={{ fill: '#f4f7fe' }}
-                                contentStyle={{ 
-                                    borderRadius: '15px', 
-                                    border: 'none', 
-                                    boxShadow: '0 10px 15px rgba(0,0,0,0.1)' 
+                                contentStyle={{
+                                    borderRadius: '15px',
+                                    border: 'none',
+                                    boxShadow: '0 10px 15px rgba(0,0,0,0.1)'
                                 }}
                             />
+
                             <Bar
                                 dataKey="orders"
                                 fill="#ff4081"
                                 radius={[8, 8, 0, 0]}
                                 barSize={40}
                             />
+
                         </BarChart>
+
                     </ResponsiveContainer>
+
                 </div>
+
             </div>
+
         </div>
+
     );
+
 }
 
+
+/*
+==========================
+STAT BOX
+==========================
+*/
+
 function StatBox({ icon, label, value, onClick, color }) {
+
     return (
-        <div className="stat-box" onClick={onClick} style={{ cursor: onClick ? "pointer" : "default" }}>
-            <div className="stat-icon" style={{ backgroundColor: `${color}15`, color: color }}>
+
+        <div
+            className="stat-box"
+            onClick={onClick}
+            style={{ cursor: onClick ? "pointer" : "default" }}
+        >
+
+            <div
+                className="stat-icon"
+                style={{ backgroundColor: `${color}15`, color: color }}
+            >
                 {icon}
             </div>
+
             <div className="stat-info">
+
                 <span className="stat-label">{label}</span>
+
                 <span className="stat-value">{value}</span>
+
             </div>
+
         </div>
+
     );
+
 }
 
 export default AdminDashboard;

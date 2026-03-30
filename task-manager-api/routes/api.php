@@ -46,7 +46,12 @@ Route::post('/login', function (Request $request) {
         ]);
     }
 
-    // phân quyền
+    /*
+    ============================
+    FIX: phân quyền rõ ràng
+    ============================
+    */
+
     $role = "user";
 
     if ($user->Email === "admin@gmail.com") {
@@ -97,11 +102,16 @@ Route::prefix('user')->group(function () {
 
 Route::get('/admin/dashboard', function () {
 
+    /*
+    FIX:
+    React thường dùng camelCase
+    */
+
     return response()->json([
-        "total_products" => DB::table("sanpham")->count(),
-        "total_categories" => DB::table("loaisp")->count(),
-        "total_orders" => DB::table("donhang")->count(),
-        "total_users" => DB::table("user")->count()
+        "totalProducts" => DB::table("sanpham")->count(),
+        "totalCategories" => DB::table("loaisp")->count(),
+        "totalOrders" => DB::table("donhang")->count(),
+        "totalUsers" => DB::table("user")->count()
     ]);
 
 });
@@ -215,6 +225,11 @@ Route::prefix('admin/products')->group(function () {
 
             ->get();
 
+
+        /*
+        FIX:
+        convert ảnh sang base64
+        */
 
         foreach ($products as $p) {
 
