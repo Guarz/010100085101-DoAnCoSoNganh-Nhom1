@@ -10,7 +10,7 @@ const ProductList = () => {
     const [selectedId, setSelectedId] = useState("all");
 
     useEffect(() => {
-        axios.get('http://127.0.0.1:8000/api/user/products')
+        axios.get('http://127.0.0.1:8000/api/products')
             .then(res => {
                 if (res.data.success) {
                     setProducts(res.data.products);
