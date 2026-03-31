@@ -271,32 +271,40 @@ Route::prefix('admin/products')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| ADMIN ORDERS (PHẦN BẠN ĐANG THIẾU)
+| ADMIN ORDERS (FULL CHUẨN)
 |--------------------------------------------------------------------------
 */
 
 Route::prefix('admin/orders')->group(function () {
 
     /*
-    GET ORDERS
+    🧾 LẤY DANH SÁCH ĐƠN HÀNG
     */
-
     Route::get('/', function () {
 
         $orders = DB::table("donhang")
 
             ->join("user", "donhang.IdUser", "=", "user.IdUser")
 
-            ->join("chitietdonhang", "donhang.IdDonHang", "=", "chitietdonhang.IdDonHang")
+            ->leftJoin("chitietdonhang", "donhang.IdDonHang", "=", "chitietdonhang.IdDonHang")
 
-            ->join("sanpham", "chitietdonhang.IdSP", "=", "sanpham.IdSP")
+            ->leftJoin("sanpham", "chitietdonhang.IdSP", "=", "sanpham.IdSP")
 
             ->select(
                 "donhang.IdDonHang as id",
                 "user.Ten as customer",
-                "sanpham.TenSP as product",
+                DB::raw("GROUP_CONCAT(sanpham.TenSP SEPARATOR ', ') as products"),
                 "donhang.TongTien as total",
-                "donhang.TrangThai as status"
+                "donhang.TrangThai as status",
+                "donhang.NgayTao as created_at"
+            )
+
+            ->groupBy(
+                "donhang.IdDonHang",
+                "user.Ten",
+                "donhang.TongTien",
+                "donhang.TrangThai",
+                "donhang.NgayTao"
             )
 
             ->orderBy("donhang.IdDonHang", "desc")
@@ -308,9 +316,43 @@ Route::prefix('admin/orders')->group(function () {
 
 
     /*
-    UPDATE STATUS
+    🔍 CHI TIẾT 1 ĐƠN HÀNG
     */
+    Route::get('/{id}', function ($id) {
 
+        $order = DB::table("donhang")
+            ->join("user", "donhang.IdUser", "=", "user.IdUser")
+            ->where("donhang.IdDonHang", $id)
+            ->select(
+                "donhang.IdDonHang as id",
+                "user.Ten as customer",
+                "user.Email as email",
+                "user.DienThoai as phone",
+                "donhang.TongTien as total",
+                "donhang.TrangThai as status",
+                "donhang.NgayTao as created_at"
+            )
+            ->first();
+
+        $items = DB::table("chitietdonhang")
+            ->leftJoin("sanpham", "chitietdonhang.IdSP", "=", "sanpham.IdSP")
+            ->where("chitietdonhang.IdDonHang", $id)
+            ->select(
+                "sanpham.TenSP as product",
+                "chitietdonhang.SoLuong as quantity"
+            )
+            ->get();
+
+        return response()->json([
+            "order" => $order,
+            "items" => $items
+        ]);
+    });
+
+
+    /*
+    ✏️ CẬP NHẬT TRẠNG THÁI
+    */
     Route::put('/{id}', function (Request $request, $id) {
 
         DB::table("donhang")
@@ -326,23 +368,41 @@ Route::prefix('admin/orders')->group(function () {
 
 
     /*
-    DELETE ORDER
+    ❌ XOÁ ĐƠN HÀNG
     */
-
     Route::delete('/{id}', function ($id) {
 
-        DB::table("donhang")
-            ->where("IdDonHang", $id)
-            ->delete();
+        DB::beginTransaction();
 
-        return response()->json([
-            "success" => true
-        ]);
+        try {
+
+            DB::table("chitietdonhang")
+                ->where("IdDonHang", $id)
+                ->delete();
+
+            DB::table("donhang")
+                ->where("IdDonHang", $id)
+                ->delete();
+
+            DB::commit();
+
+            return response()->json([
+                "success" => true
+            ]);
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                "success" => false,
+                "error" => $e->getMessage()
+            ]);
+        }
     });
 
 });
-
-
+    
 /*
 |--------------------------------------------------------------------------
 | USER ORDERS
