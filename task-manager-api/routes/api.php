@@ -3,28 +3,20 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
-
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\User\ProductController;
 use App\Http\Controllers\OrderController;
 
 /*
 |--------------------------------------------------------------------------
-| API ROUTES - SHOP QUẦN ÁO
+| 1. AUTHENTICATION (ĐĂNG NHẬP & ĐĂNG KÝ)
 |--------------------------------------------------------------------------
 */
 
-
-/*
-|--------------------------------------------------------------------------
-| AUTHENTICATION
-|--------------------------------------------------------------------------
-*/
-
+// Đăng nhập cho Khách hàng (Bảng user)
 Route::post('/login', function (Request $request) {
-
     $request->validate([
-        'email' => 'required',
+        'email' => 'required|email',
         'password' => 'required'
     ]);
 
@@ -32,24 +24,11 @@ Route::post('/login', function (Request $request) {
         ->where('Email', $request->email)
         ->first();
 
-    if (!$user) {
+    if (!$user || $user->Password != $request->password) {
         return response()->json([
             "success" => false,
-            "message" => "Email không tồn tại"
-        ]);
-    }
-
-    if ($user->Password != $request->password) {
-        return response()->json([
-            "success" => false,
-            "message" => "Mật khẩu không đúng"
-        ]);
-    }
-
-    $role = "user";
-
-    if ($user->Email === "admin@gmail.com") {
-        $role = "admin";
+            "message" => "Email hoặc mật khẩu không đúng"
+        ], 401);
     }
 
     return response()->json([
@@ -59,9 +38,37 @@ Route::post('/login', function (Request $request) {
             "id" => $user->IdUser,
             "name" => $user->Ten,
             "email" => $user->Email,
-            "address" => $user->DiaChi,
-            "phone" => $user->DienThoai,
-            "role" => $role
+            "role" => "user"
+        ]
+    ]);
+});
+
+// Đăng nhập cho Quản trị viên (Bảng admin)
+Route::post('/admin-login', function (Request $request) {
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required'
+    ]);
+
+    $admin = DB::table('admin')
+        ->where('Email', $request->email)
+        ->first();
+
+    if (!$admin || $admin->Password != $request->password) {
+        return response()->json([
+            "success" => false,
+            "message" => "Tài khoản quản trị không chính xác"
+        ], 401);
+    }
+
+    return response()->json([
+        "success" => true,
+        "message" => "Chào mừng Admin quay trở lại",
+        "user" => [
+            "id" => $admin->idAdmin,
+            "name" => $admin->TenAdmin,
+            "email" => $admin->Email,
+            "role" => "admin"
         ]
     ]);
 });
@@ -69,116 +76,54 @@ Route::post('/login', function (Request $request) {
 Route::post('/register', [AuthController::class, 'register']);
 Route::put('/user/update/{id}', [AuthController::class, 'updateProfile']);
 
-
 /*
 |--------------------------------------------------------------------------
-| USER API
+| 2. ADMIN DASHBOARD & MANAGEMENT
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('user')->group(function () {
-
-    Route::get('/products', [ProductController::class, 'index']);
-    Route::get('/products/{id}', [ProductController::class, 'show']);
-
-});
-
-
-/*
-|--------------------------------------------------------------------------
-| ADMIN DASHBOARD
-|--------------------------------------------------------------------------
-*/
-
+// Thống kê Dashboard
 Route::get('/admin/dashboard', function () {
-
     return response()->json([
         "totalProducts" => DB::table("sanpham")->count(),
         "totalCategories" => DB::table("loaisp")->count(),
         "totalOrders" => DB::table("donhang")->count(),
         "totalUsers" => DB::table("user")->count()
     ]);
-
 });
 
-
-/*
-|--------------------------------------------------------------------------
-| CATEGORY MANAGEMENT
-|--------------------------------------------------------------------------
-*/
-
+// Quản lý Danh mục
 Route::prefix('admin/categories')->group(function () {
-
     Route::get('/', function () {
-
         return DB::table("loaisp")
-            ->select(
-                "IdLoai as id",
-                "TenLoai as name"
-            )
+            ->select("IdLoai as id", "TenLoai as name")
             ->orderBy("IdLoai", "desc")
             ->get();
-
     });
 
     Route::post('/', function (Request $request) {
-
-        $id = DB::table("loaisp")->insertGetId([
-            "TenLoai" => $request->name
-        ]);
-
-        return response()->json([
-            "success" => true,
-            "id" => $id
-        ]);
+        $id = DB::table("loaisp")->insertGetId(["TenLoai" => $request->name]);
+        return response()->json(["success" => true, "id" => $id]);
     });
 
     Route::put('/{id}', function (Request $request, $id) {
-
-        DB::table("loaisp")
-            ->where("IdLoai", $id)
-            ->update([
-                "TenLoai" => $request->name
-            ]);
-
-        return response()->json([
-            "success" => true
-        ]);
+        DB::table("loaisp")->where("IdLoai", $id)->update(["TenLoai" => $request->name]);
+        return response()->json(["success" => true]);
     });
 
     Route::delete('/{id}', function ($id) {
-
-        DB::table("loaisp")
-            ->where("IdLoai", $id)
-            ->delete();
-
-        return response()->json([
-            "success" => true
-        ]);
+        DB::table("loaisp")->where("IdLoai", $id)->delete();
+        return response()->json(["success" => true]);
     });
-
 });
 
-
-/*
-|--------------------------------------------------------------------------
-| PRODUCT MANAGEMENT
-|--------------------------------------------------------------------------
-*/
-
+// Quản lý Sản phẩm
 Route::prefix('admin/products')->group(function () {
-
     Route::get('/', function () {
-
         $products = DB::table("sanpham")
-
             ->join("chitietsanpham", "sanpham.IdCT", "=", "chitietsanpham.IdCT")
-
             ->leftJoin("anhsp", "sanpham.IdAnh", "=", "anhsp.IdAnh")
-
             ->leftJoin("loaisp", "sanpham.IdLoai", "=", "loaisp.IdLoai")
-
             ->select(
                 "sanpham.IdSP as id",
                 "sanpham.TenSP as name",
@@ -188,9 +133,7 @@ Route::prefix('admin/products')->group(function () {
                 "loaisp.TenLoai as category_name",
                 "anhsp.HinhAnh as image"
             )
-
             ->orderBy("sanpham.IdSP", "desc")
-
             ->get();
 
         foreach ($products as $p) {
@@ -198,33 +141,21 @@ Route::prefix('admin/products')->group(function () {
                 $p->image = base64_encode($p->image);
             }
         }
-
         return response()->json($products);
     });
 
-
     Route::post('/', function (Request $request) {
-
         try {
-
             DB::beginTransaction();
-
             $imageId = null;
-
             if ($request->hasFile("image")) {
-
                 $imageData = file_get_contents($request->file("image"));
-
-                $imageId = DB::table("anhsp")->insertGetId([
-                    "HinhAnh" => $imageData
-                ]);
+                $imageId = DB::table("anhsp")->insertGetId(["HinhAnh" => $imageData]);
             }
-
-            $sizeId = DB::table("sizesp")->value("IdSize") ?? 1;
 
             $detailId = DB::table("chitietsanpham")->insertGetId([
                 "Gia" => $request->price,
-                "IdSize" => $sizeId
+                "IdSize" => DB::table("sizesp")->value("IdSize") ?? 1
             ]);
 
             $productId = DB::table("sanpham")->insertGetId([
@@ -237,117 +168,71 @@ Route::prefix('admin/products')->group(function () {
             ]);
 
             DB::commit();
-
-            return response()->json([
-                "success" => true,
-                "id" => $productId
-            ]);
-
+            return response()->json(["success" => true, "id" => $productId]);
         } catch (\Exception $e) {
-
             DB::rollBack();
-
-            return response()->json([
-                "success" => false,
-                "error" => $e->getMessage()
-            ]);
+            return response()->json(["success" => false, "error" => $e->getMessage()]);
         }
     });
 
-
     Route::delete('/{id}', function ($id) {
-
-        DB::table("sanpham")
-            ->where("IdSP", $id)
-            ->delete();
-
-        return response()->json([
-            "success" => true
-        ]);
+        DB::table("sanpham")->where("IdSP", $id)->delete();
+        return response()->json(["success" => true]);
     });
-
 });
 
-
-/*
-|--------------------------------------------------------------------------
-| ADMIN ORDERS (PHẦN BẠN ĐANG THIẾU)
-|--------------------------------------------------------------------------
-*/
-
+// Quản lý Đơn hàng
 Route::prefix('admin/orders')->group(function () {
-
-    /*
-    GET ORDERS
-    */
-
     Route::get('/', function () {
-
-        $orders = DB::table("donhang")
-
+        return DB::table("donhang")
             ->join("user", "donhang.IdUser", "=", "user.IdUser")
-
-            ->join("chitietdonhang", "donhang.IdDonHang", "=", "chitietdonhang.IdDonHang")
-
-            ->join("sanpham", "chitietdonhang.IdSP", "=", "sanpham.IdSP")
-
             ->select(
                 "donhang.IdDonHang as id",
                 "user.Ten as customer",
-                "sanpham.TenSP as product",
                 "donhang.TongTien as total",
-                "donhang.TrangThai as status"
+                "donhang.TrangThai as status",
+                "donhang.NgayDat as date"
             )
-
             ->orderBy("donhang.IdDonHang", "desc")
-
             ->get();
-
-        return response()->json($orders);
     });
-
-
-    /*
-    UPDATE STATUS
-    */
 
     Route::put('/{id}', function (Request $request, $id) {
-
-        DB::table("donhang")
-            ->where("IdDonHang", $id)
-            ->update([
-                "TrangThai" => $request->status
-            ]);
-
-        return response()->json([
-            "success" => true
-        ]);
+        DB::table("donhang")->where("IdDonHang", $id)->update(["TrangThai" => $request->status]);
+        return response()->json(["success" => true]);
     });
-
-
-    /*
-    DELETE ORDER
-    */
 
     Route::delete('/{id}', function ($id) {
-
-        DB::table("donhang")
-            ->where("IdDonHang", $id)
-            ->delete();
-
-        return response()->json([
-            "success" => true
-        ]);
+        DB::table("donhang")->where("IdDonHang", $id)->delete();
+        return response()->json(["success" => true]);
     });
-
 });
 
+// Quản lý Người dùng
+Route::prefix('admin/users')->group(function () {
+    Route::get('/', function () {
+        return DB::table("user")
+            ->select("IdUser as id", "Ten as name", "Email as email", "DienThoai as phone", "DiaChi as address")
+            ->orderBy("IdUser", "desc")
+            ->get();
+    });
+
+    Route::delete('/{id}', function ($id) {
+        DB::table("user")->where("IdUser", $id)->delete();
+        return response()->json(["success" => true, "message" => "Xóa thành công"]);
+    });
+});
 
 /*
 |--------------------------------------------------------------------------
-| USER ORDERS
+| 3. USER & PUBLIC API (CHO APP/WEB KHÁCH HÀNG)
 |--------------------------------------------------------------------------
 */
 
+Route::prefix('user')->group(function () {
+    Route::get('/products', [ProductController::class, 'index']);
+    Route::get('/products/{id}', [ProductController::class, 'show']);
+});
+
 Route::post('/orders', [OrderController::class, 'store']);
-Route::get('/orders/{id}', [OrderController::class, 'getOrdersByUser']);
+Route::get('/orders/user/{id}', [OrderController::class, 'getOrdersByUser']);

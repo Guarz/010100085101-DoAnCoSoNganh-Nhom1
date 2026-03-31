@@ -47,7 +47,7 @@ function AdminDashboard() {
 
         /*
         ==========================
-        LẤY DỮ LIỆU TỪ API
+        LẤY DỮ LIỆU DASHBOARD
         ==========================
         */
 
@@ -74,7 +74,6 @@ function AdminDashboard() {
 
     }, []);
 
-
     /*
     ==========================
     LOGOUT
@@ -93,10 +92,9 @@ function AdminDashboard() {
 
     };
 
-
     /*
     ==========================
-    CHART DATA
+    DATA CHO BIỂU ĐỒ
     ==========================
     */
 
@@ -108,7 +106,6 @@ function AdminDashboard() {
         { name: "T5", orders: 55 },
         { name: "T6", orders: 70 }
     ];
-
 
     if (!isAuthorized || loading) {
 
@@ -122,7 +119,6 @@ function AdminDashboard() {
         );
 
     }
-
 
     return (
 
@@ -146,8 +142,7 @@ function AdminDashboard() {
             </header>
 
 
-
-            {/* STATISTICS */}
+            {/* THỐNG KÊ */}
 
             <div className="dashboard-grid">
 
@@ -180,13 +175,13 @@ function AdminDashboard() {
                     label="Người dùng"
                     value={data.total_users}
                     color="#422AFB"
+                    onClick={() => navigate("/admin/users")}
                 />
 
             </div>
 
 
-
-            {/* CHART */}
+            {/* BIỂU ĐỒ */}
 
             <div className="chart-box">
 

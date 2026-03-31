@@ -32,6 +32,7 @@ import ProductManagement from "./pages/Admin/ProductManagement";
 import ProductDetail from "./pages/Admin/ProductDetail";
 import AdminOrders from "./pages/Admin/AdminOrders";
 import CategoryManagement from "./pages/Admin/CategoryManagement";
+import UserManagement from "./pages/Admin/UserManagement";
 
 function App() {
 
@@ -40,7 +41,7 @@ function App() {
 
   /*
   ========================
-  LOAD USER
+  LOAD USER FROM LOCAL
   ========================
   */
 
@@ -109,7 +110,7 @@ function App() {
         />
 
 
-        {/* ================= ADMIN PAGES ================= */}
+        {/* ================= ADMIN DASHBOARD ================= */}
 
         <Route
           path="/admin/dashboard"
@@ -120,6 +121,9 @@ function App() {
           }
         />
 
+
+        {/* ================= ADMIN HOME ================= */}
+
         <Route
           path="/admin/home"
           element={
@@ -128,6 +132,9 @@ function App() {
               : <Navigate to="/admin/login" />
           }
         />
+
+
+        {/* ================= PRODUCT MANAGEMENT ================= */}
 
         <Route
           path="/admin/products"
@@ -147,6 +154,9 @@ function App() {
           }
         />
 
+
+        {/* ================= ORDERS ================= */}
+
         <Route
           path="/admin/orders"
           element={
@@ -156,11 +166,26 @@ function App() {
           }
         />
 
+
+        {/* ================= CATEGORIES ================= */}
+
         <Route
           path="/admin/categories"
           element={
             isAdmin
               ? <CategoryManagement />
+              : <Navigate to="/admin/login" />
+          }
+        />
+
+
+        {/* ================= USERS ================= */}
+
+        <Route
+          path="/admin/users"
+          element={
+            isAdmin
+              ? <UserManagement />
               : <Navigate to="/admin/login" />
           }
         />

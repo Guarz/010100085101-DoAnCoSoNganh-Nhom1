@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "../../style/adminLogin.css"; // Đảm bảo file CSS nằm đúng vị trí này
+import "../../style/adminLogin.css";
 
 function AdminLogin() {
     const navigate = useNavigate();
@@ -10,12 +10,14 @@ function AdminLogin() {
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
 
+    // 1. Kiểm tra nếu đã đăng nhập rồi thì vào thẳng Dashboard
     useEffect(() => {
         const savedUser = localStorage.getItem("user");
         if (savedUser) {
             try {
                 const user = JSON.parse(savedUser);
-                if (user?.role === "admin") {
+                // Vì bạn dùng bảng admin riêng, nên mọi user ở đây mặc định là admin
+                if (user) {
                     navigate("/admin/dashboard", { replace: true });
                 }
             } catch (e) {
@@ -33,28 +35,31 @@ function AdminLogin() {
         setLoading(true);
 
         try {
-            const res = await axios.post("http://127.0.0.1:8000/api/login", {
+            // 2. Gọi đến API kết nối bảng admin mới
+            const res = await axios.post("http://127.0.0.1:8000/api/admin-login", {
                 email,
                 password
             });
 
             if (res.data.success) {
-                const user = res.data.user;
-                if (user.role !== "admin") {
-                    alert("Tài khoản này không có quyền truy cập quản trị!");
-                    setLoading(false);
-                    return;
-                }
-                localStorage.setItem("user", JSON.stringify(user));
-                alert("Đăng nhập admin thành công!");
-                window.location.href = "/admin/dashboard";
+                // Lưu thông tin vào localStorage để các trang khác kiểm tra
+                const adminData = {
+                    ...res.data.user,
+                    isAdmin: true // Đánh dấu đây là admin
+                };
+
+                localStorage.setItem("user", JSON.stringify(adminData));
+                alert("Đăng nhập hệ thống quản trị thành công!");
+
+                // Dùng navigate thay vì window.location để tránh lỗi load trang
+                navigate("/admin/dashboard");
             } else {
-                alert(res.data.message || "Đăng nhập thất bại");
+                alert(res.data.message || "Sai tài khoản hoặc mật khẩu");
                 setLoading(false);
             }
         } catch (error) {
             console.error("Login error:", error);
-            const msg = error.response?.data?.message || "Sai tài khoản hoặc mật khẩu";
+            const msg = error.response?.data?.message || "Không thể kết nối đến máy chủ";
             alert(msg);
             setLoading(false);
         }
@@ -63,7 +68,6 @@ function AdminLogin() {
     return (
         <div className="admin-login-container">
             <div className="admin-login-card">
-                {/* Phần bên trái: Brand giống trang User */}
                 <div className="admin-login-left">
                     <div className="brand-content">
                         <img
@@ -71,12 +75,12 @@ function AdminLogin() {
                             alt="Fashion"
                             className="brand-icon"
                         />
+                        {/* Tên dự án của bạn */}
                         <h1>SHOP QUẦN ÁO A</h1>
                         <p>Nâng tầm phong cách quản trị</p>
                     </div>
                 </div>
 
-                {/* Phần bên phải: Form đăng nhập */}
                 <div className="admin-login-right">
                     <div className="form-header">
                         <h2>Admin Login</h2>
@@ -88,10 +92,11 @@ function AdminLogin() {
                             <label>Email Admin</label>
                             <input
                                 type="email"
-                                placeholder="admin@example.com"
+                                placeholder="admin@gmail.com"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
+                                autoComplete="username"
                             />
                         </div>
 
@@ -104,9 +109,11 @@ function AdminLogin() {
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
+                                    autoComplete="current-password"
                                 />
                                 <span
                                     className="toggle-password"
+                                    style={{ cursor: "pointer" }}
                                     onClick={() => setShowPassword(!showPassword)}
                                 >
                                     {showPassword ? "🙈" : "👁️"}
