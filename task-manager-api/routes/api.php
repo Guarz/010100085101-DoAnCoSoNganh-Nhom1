@@ -79,6 +79,7 @@ Route::put('/user/update/{id}', [AuthController::class, 'updateProfile']);
 
 /*
 |--------------------------------------------------------------------------
+<<<<<<< Updated upstream
 | ADMIN DASHBOARD
 |--------------------------------------------------------------------------
 */
@@ -282,3 +283,161 @@ Route::post('/cart/remove', [CartController::class, 'removeItem']);
 
 Route::post('/orders', [OrderController::class, 'store']);
 Route::get('/orders/{id}', [OrderController::class, 'getOrdersByUser']);
+=======
+| AUTH
+|--------------------------------------------------------------------------
+*/
+Route::post('/login', function (Request $request) {
+    $user = DB::table('user')->where('email', $request->email)->first();
+
+    if (!$user || !Hash::check($request->password, $user->password)) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Sai email hoặc mật khẩu'
+        ], 401);
+    }
+
+    return response()->json([
+        'success' => true,
+        'user' => $user
+    ]);
+});
+
+/*
+|--------------------------------------------------------------------------
+| SẢN PHẨM
+|--------------------------------------------------------------------------
+*/
+
+/**
+ * Lấy danh sách sản phẩm
+ */
+Route::get('/sanpham', function () {
+    return DB::table('sanpham')
+        ->join('loaisp', 'sanpham.maloai', '=', 'loaisp.maloai')
+        ->select(
+            'sanpham.masp',
+            'sanpham.tensp',
+            'sanpham.gia',
+            'sanpham.soluong',
+            'loaisp.tenloai'
+        )
+        ->orderBy('sanpham.masp', 'desc')
+        ->get();
+});
+
+/**
+ * Thêm sản phẩm
+ */
+Route::post('/sanpham', function (Request $request) {
+
+    if (
+        !$request->tensp ||
+        !$request->gia ||
+        !$request->soluong ||
+        !$request->maloai
+    ) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Thiếu dữ liệu'
+        ], 400);
+    }
+
+    DB::table('sanpham')->insert([
+        'tensp' => $request->tensp,
+        'gia' => $request->gia,
+        'soluong' => $request->soluong,
+        'maloai' => $request->maloai
+    ]);
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Thêm sản phẩm thành công'
+    ]);
+});
+
+/**
+ * Xóa sản phẩm
+ */
+Route::delete('/sanpham/{id}', function ($id) {
+    DB::table('sanpham')->where('masp', $id)->delete();
+
+    return response()->json([
+        'success' => true
+    ]);
+});
+
+/*
+|--------------------------------------------------------------------------
+| ĐƠN HÀNG
+|--------------------------------------------------------------------------
+*/
+
+/**
+ * Danh sách đơn hàng
+ */
+Route::get('/donhang', function () {
+    return DB::table('donhang')
+        ->join('user', 'donhang.user_id', '=', 'user.user_id')
+        ->join('trangthai', 'donhang.matt', '=', 'trangthai.matt')
+        ->select(
+            'donhang.madh',
+            'user.name',
+            'donhang.ngaydat',
+            'donhang.tongtien',
+            'trangthai.tentt'
+        )
+        ->orderBy('donhang.madh', 'desc')
+        ->get();
+});
+
+/**
+ * Chi tiết đơn hàng
+ */
+Route::get('/donhang/{id}', function ($id) {
+
+    $donhang = DB::table('donhang')
+        ->where('madh', $id)
+        ->first();
+
+    if (!$donhang) {
+        return response()->json(['message' => 'Không tìm thấy đơn hàng'], 404);
+    }
+
+    $chitiet = DB::table('chitietdonhang')
+        ->join('sanpham', 'chitietdonhang.masp', '=', 'sanpham.masp')
+        ->where('chitietdonhang.madh', $id)
+        ->select(
+            'sanpham.tensp',
+            'chitietdonhang.soluong',
+            'chitietdonhang.dongia'
+        )
+        ->get();
+
+    return response()->json([
+        'donhang' => $donhang,
+        'chitiet' => $chitiet
+    ]);
+});
+
+/**
+ * Cập nhật trạng thái đơn hàng
+ */
+Route::put('/donhang/{id}/trangthai', function (Request $request, $id) {
+
+    if (!$request->matt) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Thiếu trạng thái'
+        ], 400);
+    }
+
+    DB::table('donhang')
+        ->where('madh', $id)
+        ->update(['matt' => $request->matt]);
+
+    return response()->json([
+        'success' => true
+    ]);
+});
+>>>>>>> Stashed changes
