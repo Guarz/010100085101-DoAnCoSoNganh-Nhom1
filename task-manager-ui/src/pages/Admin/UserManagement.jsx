@@ -11,6 +11,11 @@ function UserManagement(){
     const [loading,setLoading] = useState(true);
     const [search,setSearch] = useState("");
 
+    // 🔥 STATE EDIT
+    const [editingUser,setEditingUser] = useState(null);
+    const [name,setName] = useState("");
+    const [email,setEmail] = useState("");
+
     /*
     ========================
     LOAD USERS
@@ -18,59 +23,70 @@ function UserManagement(){
     */
 
     const fetchUsers = ()=>{
-
-        axios
-        .get("http://127.0.0.1:8000/api/admin/users")
+        axios.get("http://127.0.0.1:8000/api/admin/users")
         .then(res=>{
-
             setUsers(res.data);
             setLoading(false);
-
         })
         .catch(err=>{
-
             console.log(err);
             setLoading(false);
-
         });
-
     };
 
     useEffect(()=>{
-
         fetchUsers();
-
     },[]);
-
 
     /*
     ========================
-    DELETE USER
+    DELETE
     ========================
     */
 
     const deleteUser = (id)=>{
+        if(!window.confirm("Bạn chắc chắn muốn xoá user này?")) return;
 
-        if(!window.confirm("Bạn chắc chắn muốn xoá user này?")){
-            return;
-        }
-
-        axios
-        .delete(`http://127.0.0.1:8000/api/admin/users/${id}`)
+        axios.delete(`http://127.0.0.1:8000/api/admin/users/${id}`)
         .then(()=>{
-
             alert("Xoá thành công");
             fetchUsers();
-
         })
         .catch(()=>{
-
             alert("Xoá thất bại");
+        });
+    };
 
+    /*
+    ========================
+    EDIT
+    ========================
+    */
+
+    const startEdit = (user)=>{
+        setEditingUser(user.id);
+        setName(user.name);
+        setEmail(user.email);
+    };
+
+    const updateUser = ()=>{
+
+        axios.put(`http://127.0.0.1:8000/api/admin/users/${editingUser}`,{
+            name,
+            email
+        })
+        .then(()=>{
+            alert("Cập nhật thành công");
+            setEditingUser(null);
+            setName("");
+            setEmail("");
+            fetchUsers();
+        })
+        .catch(()=>{
+            alert("Cập nhật thất bại");
         });
 
     };
-
 
     /*
     ========================
@@ -79,26 +95,22 @@ function UserManagement(){
     */
 
     const filteredUsers = users.filter(user =>
-
         user.name.toLowerCase().includes(search.toLowerCase()) ||
         user.email.toLowerCase().includes(search.toLowerCase())
-
     );
-
 
     if(loading){
         return <h3 style={{textAlign:"center"}}>Đang tải dữ liệu...</h3>;
     }
 
-
     return(
 
         <div className="user-container">
 
+            {/* HEADER */}
             <div className="user-header">
 
                 <div>
-
                     <button
                         className="back-btn"
                         onClick={()=>navigate("/admin/dashboard")}
@@ -109,11 +121,9 @@ function UserManagement(){
                     <span className="user-title">
                         👤 Quản lý người dùng
                     </span>
-
                 </div>
 
                 <div>
-
                     <input
                         type="text"
                         placeholder="Tìm kiếm user..."
@@ -129,38 +139,52 @@ function UserManagement(){
                     >
                         Reload
                     </button>
-
                 </div>
-
             </div>
 
+            {/* 🔥 FORM EDIT */}
+            {editingUser && (
+                <div className="edit-box">
+                    <h3>Sửa user</h3>
 
+                    <input
+                        value={name}
+                        onChange={(e)=>setName(e.target.value)}
+                        placeholder="Tên"
+                    />
+
+                    <input
+                        value={email}
+                        onChange={(e)=>setEmail(e.target.value)}
+                        placeholder="Email"
+                    />
+
+                    <button onClick={updateUser}>Cập nhật</button>
+                    <button onClick={()=>setEditingUser(null)}>Huỷ</button>
+                </div>
+            )}
+
+            {/* TABLE */}
             <table className="user-table">
 
                 <thead>
-
                     <tr>
-
                         <th>ID</th>
                         <th>Tên</th>
                         <th>Email</th>
                         <th>Ngày tạo</th>
                         <th>Hành động</th>
-
                     </tr>
-
                 </thead>
 
                 <tbody>
 
                     {filteredUsers.map(user =>(
 
-                        <tr key={user.id}>
+                        <tr key={user.id} className="table-row">
 
                             <td>{user.id}</td>
-
                             <td>{user.name}</td>
-
                             <td>{user.email}</td>
 
                             <td>
@@ -170,6 +194,12 @@ function UserManagement(){
                             </td>
 
                             <td>
+                                <button
+                                    className="edit-btn"
+                                    onClick={()=>startEdit(user)}
+                                >
+                                    Sửa
+                                </button>
 
                                 <button
                                     className="delete-btn"
@@ -177,7 +207,6 @@ function UserManagement(){
                                 >
                                     Xoá
                                 </button>
-
                             </td>
 
                         </tr>
@@ -185,13 +214,10 @@ function UserManagement(){
                     ))}
 
                 </tbody>
-
             </table>
 
         </div>
-
     );
-
 }
 
 export default UserManagement;
