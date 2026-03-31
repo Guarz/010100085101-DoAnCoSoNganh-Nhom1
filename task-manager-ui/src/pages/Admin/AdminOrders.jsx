@@ -8,12 +8,9 @@ function AdminOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // =========================
-  // LOAD DATA
-  // =========================
+  // ================= LOAD DATA =================
   const fetchOrders = async () => {
     try {
-      setLoading(true);
       const res = await fetch("http://localhost:8000/api/admin/orders");
       const data = await res.json();
       setOrders(Array.isArray(data) ? data : []);
@@ -29,9 +26,7 @@ function AdminOrders() {
     fetchOrders();
   }, []);
 
-  // =========================
-  // UPDATE STATUS
-  // =========================
+  // ================= UPDATE STATUS =================
   const changeStatus = async (id, status) => {
     await fetch(`http://localhost:8000/api/admin/orders/${id}/status`, {
       method: "PUT",
@@ -42,11 +37,9 @@ function AdminOrders() {
     fetchOrders();
   };
 
-  // =========================
-  // DELETE
-  // =========================
+  // ================= DELETE =================
   const deleteOrder = async (id) => {
-    if (!window.confirm("Xóa đơn này?")) return;
+    if (!window.confirm("Bạn có chắc muốn xóa?")) return;
 
     await fetch(`http://localhost:8000/api/admin/orders/${id}`, {
       method: "DELETE"
@@ -55,145 +48,99 @@ function AdminOrders() {
     fetchOrders();
   };
 
-  // =========================
-  // FORMAT
-  // =========================
   const formatMoney = (money) =>
     Number(money || 0).toLocaleString() + " đ";
 
-  // =========================
-  // STATUS COLOR
-  // =========================
-  const getStatus = (idTT) => {
-    switch (idTT) {
-      case 1:
-        return { text: "Chờ xử lý", color: "#f39c12" };
-      case 2:
-        return { text: "Đang giao", color: "#3498db" };
-      case 3:
-        return { text: "Hoàn thành", color: "#2ecc71" };
-      case 4:
-        return { text: "Hủy", color: "#e74c3c" };
-      default:
-        return { text: "Không rõ", color: "#777" };
-    }
-  };
-
+  // ================= UI =================
   return (
-    <div style={styles.container}>
+    <div style={styles.page}>
 
-      {/* HEADER */}
-      <div style={styles.header}>
-        <button onClick={() => navigate("/admin/dashboard")} style={styles.back}>
-          ⬅
-        </button>
+      {/* BACK */}
+      <button style={styles.backBtn} onClick={() => navigate("/admin/dashboard")}>
+        ⬅ Quay lại Dashboard
+      </button>
 
-        <h2>📦 Quản lý đơn hàng</h2>
-      </div>
+      {/* TITLE */}
+      <h1 style={styles.title}>📦 Quản lý đơn hàng</h1>
 
-      {/* LOADING */}
-      {loading ? (
-        <p>⏳ Đang tải...</p>
-      ) : orders.length === 0 ? (
-        <div style={styles.emptyBox}>
-          <p>📭 Không có đơn hàng</p>
-        </div>
-      ) : (
+      {/* CARD */}
+      <div style={styles.card}>
 
-        <div style={styles.tableWrapper}>
+        <h2 style={styles.subTitle}>📋 Danh sách đơn hàng</h2>
+
+        {loading ? (
+          <p>Đang tải...</p>
+        ) : orders.length === 0 ? (
+          <p>Không có đơn hàng</p>
+        ) : (
 
           <table style={styles.table}>
 
             <thead>
-              <tr>
+              <tr style={styles.thead}>
                 <th>ID</th>
-                <th>Khách</th>
+                <th>Khách hàng</th>
                 <th>Sản phẩm</th>
                 <th>Tổng tiền</th>
                 <th>Trạng thái</th>
-                <th></th>
+                <th>Hành động</th>
               </tr>
             </thead>
 
             <tbody>
 
-              {orders.map((order) => {
-                const status = getStatus(order.IdTT);
+              {orders.map((order) => (
 
-                return (
-                  <tr key={order.IdDH} style={styles.row}>
+                <tr key={order.IdDH} style={styles.row}>
 
-                    <td>#{order.IdDH}</td>
+                  <td>{order.IdDH}</td>
 
-                    <td>
-                      <b>{order.user?.name || "Không rõ"}</b>
-                    </td>
+                  <td>{order.user?.name}</td>
 
-                    {/* PRODUCTS */}
-                    <td>
-                      {order.chi_tiet?.length > 0 ? (
-                        order.chi_tiet.map((item) => (
-                          <div key={item.IdCTDH} style={styles.product}>
-                            {item.san_pham?.TenSP} x{item.SoLuong}
-                          </div>
-                        ))
-                      ) : (
-                        <span>Không có</span>
-                      )}
-                    </td>
+                  <td>
+                    {order.chi_tiet?.map((item) => (
+                      <div key={item.IdCTDH}>
+                        {item.san_pham?.TenSP} x{item.SoLuong}
+                      </div>
+                    ))}
+                  </td>
 
-                    {/* MONEY */}
-                    <td style={styles.money}>
-                      {formatMoney(order.TongTien)}
-                    </td>
+                  <td style={{ color: "red", fontWeight: "bold" }}>
+                    {formatMoney(order.TongTien)}
+                  </td>
 
-                    {/* STATUS */}
-                    <td>
-                      <span
-                        style={{
-                          ...styles.badge,
-                          background: status.color
-                        }}
-                      >
-                        {status.text}
-                      </span>
+                  <td>
+                    <select
+                      value={order.IdTT}
+                      onChange={(e) =>
+                        changeStatus(order.IdDH, e.target.value)
+                      }
+                      style={styles.select}
+                    >
+                      <option value={1}>Chờ xử lý</option>
+                      <option value={2}>Đang giao</option>
+                      <option value={3}>Hoàn thành</option>
+                      <option value={4}>Hủy</option>
+                    </select>
+                  </td>
 
-                      <br />
+                  <td>
+                    <button style={styles.deleteBtn} onClick={() => deleteOrder(order.IdDH)}>
+                      Xóa
+                    </button>
+                  </td>
 
-                      <select
-                        value={order.IdTT}
-                        onChange={(e) =>
-                          changeStatus(order.IdDH, e.target.value)
-                        }
-                        style={styles.select}
-                      >
-                        <option value={1}>Chờ xử lý</option>
-                        <option value={2}>Đang giao</option>
-                        <option value={3}>Hoàn thành</option>
-                        <option value={4}>Hủy</option>
-                      </select>
-                    </td>
+                </tr>
 
-                    {/* ACTION */}
-                    <td>
-                      <button
-                        onClick={() => deleteOrder(order.IdDH)}
-                        style={styles.delete}
-                      >
-                        🗑
-                      </button>
-                    </td>
-
-                  </tr>
-                );
-              })}
+              ))}
 
             </tbody>
 
           </table>
 
-        </div>
-      )}
+        )}
+
+      </div>
     </div>
   );
 }
@@ -203,32 +150,38 @@ export default AdminOrders;
 
 // ================= STYLE =================
 const styles = {
-  container: {
-    padding: 30,
-    background: "#f4f6f9",
-    minHeight: "100vh"
+
+  page: {
+    background: "#cfe8ef",
+    minHeight: "100vh",
+    padding: 30
   },
 
-  header: {
-    display: "flex",
-    alignItems: "center",
-    gap: 10,
+  backBtn: {
+    background: "#ff3b6c",
+    color: "#fff",
+    border: "none",
+    padding: "10px 15px",
+    borderRadius: 8,
+    cursor: "pointer",
     marginBottom: 20
   },
 
-  back: {
-    padding: "6px 12px",
-    background: "#333",
-    color: "#fff",
-    border: "none",
-    cursor: "pointer"
+  title: {
+    fontSize: 32,
+    fontWeight: "bold",
+    marginBottom: 20
   },
 
-  tableWrapper: {
+  card: {
     background: "#fff",
-    borderRadius: 12,
-    boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
-    overflow: "hidden"
+    padding: 20,
+    borderRadius: 15,
+    boxShadow: "0 4px 10px rgba(0,0,0,0.1)"
+  },
+
+  subTitle: {
+    marginBottom: 15
   },
 
   table: {
@@ -236,45 +189,26 @@ const styles = {
     borderCollapse: "collapse"
   },
 
+  thead: {
+    background: "#f7b2c4"
+  },
+
   row: {
-    borderBottom: "1px solid #eee"
-  },
-
-  product: {
-    fontSize: 14
-  },
-
-  money: {
-    color: "#e74c3c",
-    fontWeight: "bold"
-  },
-
-  badge: {
-    padding: "4px 10px",
-    borderRadius: 20,
-    color: "#fff",
-    fontSize: 12,
-    display: "inline-block"
+    textAlign: "center",
+    borderBottom: "1px solid #ddd"
   },
 
   select: {
-    marginTop: 5,
-    padding: "3px"
+    padding: 5,
+    borderRadius: 5
   },
 
-  delete: {
-    background: "#e74c3c",
+  deleteBtn: {
+    background: "red",
     color: "#fff",
     border: "none",
-    padding: "6px 10px",
+    padding: "6px 12px",
     borderRadius: 5,
     cursor: "pointer"
-  },
-
-  emptyBox: {
-    background: "#fff",
-    padding: 40,
-    textAlign: "center",
-    borderRadius: 10
   }
 };
