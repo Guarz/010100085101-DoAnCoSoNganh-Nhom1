@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export default function AdminHome() {
+export default function HomePage() {
 
     const [data, setData] = useState({
         total_products: 0,
@@ -9,55 +9,18 @@ export default function AdminHome() {
         total_users: 0
     });
 
-    const [loading, setLoading] = useState(true);
-
-    const [error, setError] = useState(null);
-
-
     useEffect(() => {
 
-        const loadDashboard = async () => {
-
-            try {
-
-                const res = await fetch("http://127.0.0.1:8000/api/admin/dashboard");
-
-                const result = await res.json();
-
-                setData(result);
-
-                setLoading(false);
-
-            } catch (err) {
-
+        fetch("http://127.0.0.1:8000/api/admin/dashboard")
+            .then(res => res.json())
+            .then(res => {
+                setData(res);
+            })
+            .catch(err => {
                 console.log(err);
-
-                setError("Không thể tải dữ liệu");
-
-                setLoading(false);
-
-            }
-
-        };
-
-        loadDashboard();
+            });
 
     }, []);
-
-
-
-    if (loading) {
-
-        return <h2 style={{ padding: 30 }}>Đang tải dữ liệu...</h2>;
-
-    }
-
-    if (error) {
-
-        return <h2 style={{ padding: 30 }}>{error}</h2>;
-
-    }
-
 
     return (
 
@@ -90,9 +53,7 @@ export default function AdminHome() {
             </div>
 
         </div>
-
     );
-
 }
 
 
@@ -109,15 +70,14 @@ const title = {
 
 const cardContainer = {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))",
+    gridTemplateColumns: "repeat(4,1fr)",
     gap: 20
 };
 
 const card = {
-    background: "#fff",
+    background: "#ed6cc2",
     padding: 30,
     borderRadius: 10,
     boxShadow: "0 0 10px rgba(0,0,0,0.1)",
-    textAlign: "center",
-    fontSize: 18
+    textAlign: "center"
 };

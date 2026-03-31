@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link, useOutletContext } from "react-router-dom";
+import { useParams, Link, useOutletContext, useNavigate } from "react-router-dom"; // Thêm useNavigate
 import axios from "axios";
 import "./ProductDetail.css";
 
 const UserProductDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const { setCart } = useOutletContext();
@@ -25,6 +26,14 @@ const UserProductDetail = () => {
   }, [id]);
 
   const handleAddToCart = () => {
+    const user = localStorage.getItem("user");
+
+    if (!user) {
+      alert("Vui lòng đăng nhập để thực hiện chức năng này!");
+      navigate("/login"); 
+      return; 
+    }
+
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
     const existingItemIndex = cart.findIndex((item) => item.IdSP === product.IdSP);
     const qtyToAdd = Number(quantity) || 1;
@@ -59,7 +68,6 @@ const UserProductDetail = () => {
 
   return (
     <div className="container mt-5 pb-5 position-relative">
-      {/* THÔNG BÁO POP-UP (Khớp với class .cart-popup trong CSS) */}
       {showPopup && (
         <div className="cart-popup shadow">
           <i className="bi bi-check-circle-fill me-2"></i>
@@ -69,7 +77,6 @@ const UserProductDetail = () => {
         </div>
       )}
 
-      {/* NÚT QUAY LẠI (Khớp với class .btn-back-custom) */}
       <Link to="/products" className="btn btn-back-custom mb-4 px-4 shadow-sm">
         <i className="bi bi-arrow-left me-2"></i> Tiếp tục mua sắm
       </Link>
@@ -82,13 +89,8 @@ const UserProductDetail = () => {
         </div>
 
         <div className="col-md-6">
-          {/* NHÃN DANH MỤC */}
           <span className="badge-category-tag">{product.TenLoai}</span>
-          
-          {/* TÊN SẢN PHẨM */}
           <h1 className="product-detail-name mt-2 mb-3">{product.TenSP}</h1>
-          
-          {/* GIÁ TIỀN */}
           <h3 className="product-price-detail mb-4">
             {Number(product.Gia).toLocaleString("vi-VN")} đ
           </h3>
@@ -113,7 +115,6 @@ const UserProductDetail = () => {
             </div>
           </div>
 
-          {/* NÚT THÊM GIỎ HÀNG (Khớp với class .btn-add-main) */}
           <button onClick={handleAddToCart} className="btn btn-add-main w-100 py-3">
             <i className="bi bi-cart-plus me-2"></i> THÊM VÀO GIỎ HÀNG
           </button>
