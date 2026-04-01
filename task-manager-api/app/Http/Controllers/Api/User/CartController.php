@@ -10,33 +10,23 @@ use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
-    /**
-     * Lấy danh sách sản phẩm trong giỏ
-     */
     public function getCartByUserId($idUser)
     {
-        // 1. Đảm bảo luôn có bản ghi GioHang (cái vỏ)
-        // Lưu ý: Cần thêm $fillable = ['IdUser'] vào model GioHang để chạy dòng này
         $gioHang = GioHang::firstOrCreate(['IdUser' => $idUser]);
-
-        // 2. Truy vấn trực tiếp từ bảng ChiTietGioHang thông qua IdGH
-        // Sử dụng chính xác tên hàm bạn viết trong Model: ChiTietGioHang, SanPham
         $listItems = ChiTietGioHang::where('IdGH', $gioHang->IdGH)
             ->with(['SanPham.anhSP', 'SanPham.chiTietSanPham'])
             ->get();
 
-        // 3. Trường hợp giỏ hàng trống
         if ($listItems->isEmpty()) {
             return response()->json([
                 'success' => true,
-                'products' => [], // Trả về mảng rỗng để React hiện "Giỏ hàng trống"
+                'products' => [],
                 'cart_id' => $gioHang->IdGH
             ]);
         }
 
-        // 4. Map dữ liệu để trả về frontend (Khớp với các trường React đang dùng)
         $items = $listItems->map(function ($ct) {
-            $sp = $ct->SanPham; // Gọi đúng hàm SanPham() trong model ChiTietGioHang
+            $sp = $ct->SanPham;
 
             return [
                 'IdSP'     => $sp->IdSP,
@@ -53,10 +43,6 @@ class CartController extends Controller
             'products' => $items
         ]);
     }
-
-    /**
-     * Thêm sản phẩm vào giỏ
-     */
     public function addToCart(Request $request)
     {
         $idUser = $request->IdUser;
@@ -73,7 +59,6 @@ class CartController extends Controller
             $chiTiet->SoLuong += $soLuongThem;
             $chiTiet->save();
         } else {
-            // Cần thêm $fillable vào model ChiTietGioHang để chạy dòng này
             ChiTietGioHang::create([
                 'IdGH' => $gioHang->IdGH,
                 'IdSP' => $idSP,
@@ -87,10 +72,6 @@ class CartController extends Controller
             'IdGH' => $gioHang->IdGH
         ]);
     }
-
-    /**
-     * Cập nhật số lượng (+ - tại trang giỏ hàng)
-     */
     public function updateQty(Request $request)
     {
         $gioHang = GioHang::where('IdUser', $request->IdUser)->first();
@@ -112,9 +93,6 @@ class CartController extends Controller
         return response()->json(['success' => false, 'message' => 'Sản phẩm không tồn tại'], 404);
     }
 
-    /**
-     * Xóa sản phẩm khỏi giỏ
-     */
     public function removeItem(Request $request)
     {
         $gioHang = GioHang::where('IdUser', $request->IdUser)->first();
