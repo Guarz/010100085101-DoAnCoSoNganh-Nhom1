@@ -84,12 +84,16 @@ Route::put('/user/update/{id}', [AuthController::class, 'updateProfile']);
 
 Route::get('/admin/dashboard', function () {
 
+    $revenue = DB::table("chitietdonhang")->sum("TongTien");
+
     return response()->json([
         "totalProducts" => DB::table("sanpham")->count(),
         "totalCategories" => DB::table("loaisp")->count(),
         "totalOrders" => DB::table("donhang")->count(),
-        "totalUsers" => DB::table("user")->count()
+        "totalUsers" => DB::table("user")->count(),
+        "totalRevenue" => $revenue
     ]);
+
 });
 
 
@@ -266,44 +270,81 @@ Route::prefix('admin/products')->group(function () {
 
 });
 
-/*
-|--------------------------------------------------------------------------
-| ADMIN ORDERS
-|--------------------------------------------------------------------------
-*/
-
 Route::prefix('admin/orders')->group(function () {
 
+    // ==============================
+    // DANH SÁCH ĐƠN HÀNG
+    // ==============================
     Route::get('/', function () {
 
-        return DB::table("donhang")
-
+        $orders = DB::table("donhang")
             ->join("user", "donhang.IdUser", "=", "user.IdUser")
-
             ->leftJoin("chitietdonhang", "donhang.IdDH", "=", "chitietdonhang.IdDH")
-
             ->leftJoin("sanpham", "chitietdonhang.IdSP", "=", "sanpham.IdSP")
 
             ->select(
                 "donhang.IdDH as id",
                 "user.Ten as customer",
                 DB::raw("GROUP_CONCAT(sanpham.TenSP SEPARATOR ', ') as products"),
-                "donhang.NgayDat as created_at",
-                "donhang.IdTT as status"
+                DB::raw("SUM(chitietdonhang.TongTien) as total"),
+                "donhang.IdTT as status",
+                "donhang.NgayDat as date"
             )
 
             ->groupBy(
                 "donhang.IdDH",
                 "user.Ten",
-                "donhang.NgayDat",
-                "donhang.IdTT"
+                "donhang.IdTT",
+                "donhang.NgayDat"
             )
 
             ->orderBy("donhang.IdDH", "desc")
 
             ->get();
+
+        return response()->json($orders);
     });
 
+});
+Route::get('/admin/orders/{id}', function ($id) {
+
+    $items = DB::table("chitietdonhang")
+
+        ->join("sanpham", "chitietdonhang.IdSP", "=", "sanpham.IdSP")
+
+        ->select(
+            "sanpham.TenSP as product",
+            "chitietdonhang.SoLuong as qty",
+            "chitietdonhang.TongTien as total"
+        )
+
+        ->where("chitietdonhang.IdDH", $id)
+
+        ->get();
+
+    return response()->json($items);
+});
+Route::put('/admin/orders/{id}/status', function (Request $request, $id) {
+
+    DB::table("donhang")
+        ->where("IdDH", $id)
+        ->update([
+            "IdTT" => $request->status
+        ]);
+
+    return response()->json([
+        "success" => true
+    ]);
+});
+Route::delete('/admin/orders/{id}', function ($id) {
+
+    DB::table("donhang")
+        ->where("IdDH", $id)
+        ->delete();
+
+    return response()->json([
+        "success" => true
+    ]);
 });
 
 /*
@@ -357,6 +398,32 @@ Route::prefix('admin/users')->group(function () {
             "success" => true
         ]);
     });
+});
+Route::get('/admin/revenue-chart', function () {
+
+    $data = DB::table("donhang")
+        ->join("chitietdonhang", "donhang.IdDH", "=", "chitietdonhang.IdDH")
+        ->select(
+            DB::raw("MONTH(donhang.NgayDat) as month"),
+            DB::raw("SUM(chitietdonhang.TongTien) as revenue")
+        )
+        ->groupBy(DB::raw("MONTH(donhang.NgayDat)"))
+        ->get();
+
+    $result = [];
+
+    for ($i = 1; $i <= 12; $i++) {
+
+        $found = $data->firstWhere('month', $i);
+
+        $result[] = [
+            "month" => $i,
+            "revenue" => $found ? $found->revenue : 0
+        ];
+    }
+
+    return response()->json($result);
+
 });
 // USER ROUTES Đm thằng nào Admin mà làm chỗ này t đánh chết >:( 
 
