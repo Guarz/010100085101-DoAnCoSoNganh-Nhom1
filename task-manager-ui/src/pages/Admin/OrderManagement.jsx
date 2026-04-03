@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import "../../style/order.css";
-
+import "../../style/table.css";
 function OrderManagement() {
 
     const [orders, setOrders] = useState([]);

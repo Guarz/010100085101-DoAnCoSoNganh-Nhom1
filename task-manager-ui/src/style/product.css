@@ -228,3 +228,9 @@ td img {
     background-color: #e5e5e5;
     transform: translateY(-2px);
 }
+td img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+}

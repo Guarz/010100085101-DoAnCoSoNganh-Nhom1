@@ -1,0 +1,73 @@
+/* ===== TABLE ADMIN CHUNG ===== */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    background: white;
+}
+
+/* HEADER */
+
+thead {
+    background: #f8bbd0;
+}
+
+th {
+    padding: 12px;
+    text-align: center;
+    font-weight: 600;
+}
+
+/* BODY */
+
+td {
+    padding: 12px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* ROW */
+
+tbody tr {
+    border-bottom: 1px solid #eee;
+}
+
+tbody tr:hover {
+    background: #f9f9f9;
+}
+
+/* ẢNH SẢN PHẨM */
+
+td img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+/* BUTTON */
+
+.edit-btn {
+    background: orange;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.delete-btn {
+    background: red;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.edit-btn:hover,
+.delete-btn:hover {
+    opacity: 0.8;
+}

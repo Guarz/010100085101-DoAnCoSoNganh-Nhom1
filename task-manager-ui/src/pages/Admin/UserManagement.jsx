@@ -2,19 +2,19 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../../style/userManagement.css";
-
-function UserManagement(){
+import "../../style/table.css";
+function UserManagement() {
 
     const navigate = useNavigate();
 
-    const [users,setUsers] = useState([]);
-    const [loading,setLoading] = useState(true);
-    const [search,setSearch] = useState("");
+    const [users, setUsers] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [search, setSearch] = useState("");
 
     // 🔥 STATE EDIT
-    const [editingUser,setEditingUser] = useState(null);
-    const [name,setName] = useState("");
-    const [email,setEmail] = useState("");
+    const [editingUser, setEditingUser] = useState(null);
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
 
     /*
     ========================
@@ -22,21 +22,21 @@ function UserManagement(){
     ========================
     */
 
-    const fetchUsers = ()=>{
+    const fetchUsers = () => {
         axios.get("http://127.0.0.1:8000/api/admin/users")
-        .then(res=>{
-            setUsers(res.data);
-            setLoading(false);
-        })
-        .catch(err=>{
-            console.log(err);
-            setLoading(false);
-        });
+            .then(res => {
+                setUsers(res.data);
+                setLoading(false);
+            })
+            .catch(err => {
+                console.log(err);
+                setLoading(false);
+            });
     };
 
-    useEffect(()=>{
+    useEffect(() => {
         fetchUsers();
-    },[]);
+    }, []);
 
     /*
     ========================
@@ -44,17 +44,17 @@ function UserManagement(){
     ========================
     */
 
-    const deleteUser = (id)=>{
-        if(!window.confirm("Bạn chắc chắn muốn xoá user này?")) return;
+    const deleteUser = (id) => {
+        if (!window.confirm("Bạn chắc chắn muốn xoá user này?")) return;
 
         axios.delete(`http://127.0.0.1:8000/api/admin/users/${id}`)
-        .then(()=>{
-            alert("Xoá thành công");
-            fetchUsers();
-        })
-        .catch(()=>{
-            alert("Xoá thất bại");
-        });
+            .then(() => {
+                alert("Xoá thành công");
+                fetchUsers();
+            })
+            .catch(() => {
+                alert("Xoá thất bại");
+            });
     };
 
     /*
@@ -63,34 +63,34 @@ function UserManagement(){
     ========================
     */
 
-    const startEdit = (user)=>{
+    const startEdit = (user) => {
         setEditingUser(user.id);
         setName(user.name);
         setEmail(user.email);
     };
 
-   const updateUser = () => {
-    if (!name || !email) {
-        alert("Vui lòng nhập đủ tên và email");
-        return;
-    }
+    const updateUser = () => {
+        if (!name || !email) {
+            alert("Vui lòng nhập đủ tên và email");
+            return;
+        }
 
-    axios.put(`http://127.0.0.1:8000/api/admin/users/${editingUser}`, {
-        name: name,
-        email: email
-    })
-    .then(() => {
-        alert("Cập nhật thành công");
-        setEditingUser(null);
-        fetchUsers();
-    })
-    .catch((err) => {
-        console.error("Full Error:", err);
-        // Kiểm tra xem có message cụ thể từ backend không, nếu không thì lấy message mặc định
-        const errMsg = err.response?.data?.message || err.message || "Lỗi không xác định";
-        alert("Thất bại: " + errMsg);
-    });
-};
+        axios.put(`http://127.0.0.1:8000/api/admin/users/${editingUser}`, {
+            name: name,
+            email: email
+        })
+            .then(() => {
+                alert("Cập nhật thành công");
+                setEditingUser(null);
+                fetchUsers();
+            })
+            .catch((err) => {
+                console.error("Full Error:", err);
+                // Kiểm tra xem có message cụ thể từ backend không, nếu không thì lấy message mặc định
+                const errMsg = err.response?.data?.message || err.message || "Lỗi không xác định";
+                alert("Thất bại: " + errMsg);
+            });
+    };
     /*
     ========================
     SEARCH
@@ -102,11 +102,11 @@ function UserManagement(){
         user.email.toLowerCase().includes(search.toLowerCase())
     );
 
-    if(loading){
-        return <h3 style={{textAlign:"center"}}>Đang tải dữ liệu...</h3>;
+    if (loading) {
+        return <h3 style={{ textAlign: "center" }}>Đang tải dữ liệu...</h3>;
     }
 
-    return(
+    return (
 
         <div className="user-container">
 
@@ -116,7 +116,7 @@ function UserManagement(){
                 <div>
                     <button
                         className="back-btn"
-                        onClick={()=>navigate("/admin/dashboard")}
+                        onClick={() => navigate("/admin/dashboard")}
                     >
                         ← Quay lại
                     </button>
@@ -132,12 +132,12 @@ function UserManagement(){
                         placeholder="Tìm kiếm user..."
                         className="search-box"
                         value={search}
-                        onChange={(e)=>setSearch(e.target.value)}
+                        onChange={(e) => setSearch(e.target.value)}
                     />
 
                     <button
                         className="reload-btn"
-                        style={{marginLeft:"10px"}}
+                        style={{ marginLeft: "10px" }}
                         onClick={fetchUsers}
                     >
                         Reload
@@ -145,37 +145,37 @@ function UserManagement(){
                 </div>
             </div>
 
-           {/* 🔥 FORM EDIT */}
-{editingUser && (
-    <div className="edit-box">
-        <h3 style={{ marginBottom: "15px", color: "#333" }}>Sửa thông tin người dùng</h3>
+            {/* 🔥 FORM EDIT */}
+            {editingUser && (
+                <div className="edit-box">
+                    <h3 style={{ marginBottom: "15px", color: "#333" }}>Sửa thông tin người dùng</h3>
 
-        <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: "10px" }}>
-            <input
-                className="edit-input"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Tên"
-            />
+                    <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: "10px" }}>
+                        <input
+                            className="edit-input"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            placeholder="Tên"
+                        />
 
-            <input
-                className="edit-input"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Email"
-            />
+                        <input
+                            className="edit-input"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="Email"
+                        />
 
-            <div className="edit-actions">
-                <button className="btn-update" onClick={updateUser}>
-                    ✓ Cập nhật
-                </button>
-                <button className="btn-cancel" onClick={() => setEditingUser(null)}>
-                    ✕ Huỷ
-                </button>
-            </div>
-        </div>
-    </div>
-)}
+                        <div className="edit-actions">
+                            <button className="btn-update" onClick={updateUser}>
+                                ✓ Cập nhật
+                            </button>
+                            <button className="btn-cancel" onClick={() => setEditingUser(null)}>
+                                ✕ Huỷ
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
             {/* TABLE */}
             <table className="user-table">
 
@@ -191,7 +191,7 @@ function UserManagement(){
 
                 <tbody>
 
-                    {filteredUsers.map(user =>(
+                    {filteredUsers.map(user => (
 
                         <tr key={user.id} className="table-row">
 
@@ -208,14 +208,14 @@ function UserManagement(){
                             <td>
                                 <button
                                     className="edit-btn"
-                                    onClick={()=>startEdit(user)}
+                                    onClick={() => startEdit(user)}
                                 >
                                     Sửa
                                 </button>
 
                                 <button
                                     className="delete-btn"
-                                    onClick={()=>deleteUser(user.id)}
+                                    onClick={() => deleteUser(user.id)}
                                 >
                                     Xoá
                                 </button>

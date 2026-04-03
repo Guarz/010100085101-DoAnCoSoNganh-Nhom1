@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../style/category.css";
-
+import "../../style/table.css";
 function CategoryManagement() {
 
     const navigate = useNavigate();
