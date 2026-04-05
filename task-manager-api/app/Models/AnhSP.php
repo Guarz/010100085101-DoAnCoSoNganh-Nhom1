@@ -19,7 +19,8 @@ class AnhSP extends Model
 
     // Một sản phẩm có thể có nhiều ảnh
     public function sanpham()
-    {
-        return $this->belongsTo(SanPham::class, 'IdAnh', 'IdAnh');
-    }
+{
+    // AnhSP thuộc về SanPham, liên kết qua cột IdSP
+    return $this->belongsTo(SanPham::class, 'IdSP', 'IdSP');
+}
 }

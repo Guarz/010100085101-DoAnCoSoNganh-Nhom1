@@ -23,11 +23,10 @@ class DonHang extends Model
     }
     public function trangThai()
     {
-        return $this->hasOne(TrangThai::class, 'IdTT', 'IdTT');
+        return $this->belongsTo(TrangThai::class, 'IdTT', 'IdTT');
     }
     public function chiTiet()
     {
         return $this->hasMany(ChiTietDonHang::class, 'IdDH', 'IdDH');
     }
-
 }

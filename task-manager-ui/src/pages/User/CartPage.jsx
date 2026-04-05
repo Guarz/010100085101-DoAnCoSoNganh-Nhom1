@@ -20,14 +20,12 @@ const CartPage = () => {
     }
 
     if (user?.IdUser) {
-      // SỬA TẠI ĐÂY: Bỏ /user, chỉ để /api/cart/
       axios
         .get(`http://127.0.0.1:8000/api/cart/${user.IdUser}`, {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((res) => {
           if (res.data.success) {
-            // Controller trả về key 'products', hãy dùng đúng tên này
             const data = res.data.products || [];
             console.log("Dữ liệu từ DB:", data);
             setCart(data);
@@ -36,7 +34,6 @@ const CartPage = () => {
         })
         .catch((err) => {
           console.error("Lỗi giỏ hàng:", err);
-          // Nếu lỗi 401 hoặc 404 không mong muốn, kiểm tra lại URL
           if (err.response?.status === 401) navigate("/login");
         });
     }
@@ -52,8 +49,6 @@ const CartPage = () => {
 };
   const handleUpdateQty = async (idSP, newQty) => {
     if (newQty < 1) return;
-
-    // Cập nhật UI nhanh (Optimistic UI)
     const updatedCart = cart.map((item) =>
       item.IdSP === idSP ? { ...item, quantity: newQty } : item
     );
@@ -71,7 +66,6 @@ const CartPage = () => {
       );
     } catch (error) {
       console.error("Lỗi cập nhật DB:", error);
-      // Nếu lỗi DB thì nên reload lại data chuẩn từ server (tùy chọn)
     }
   };
 
@@ -128,7 +122,6 @@ const CartPage = () => {
     return sum + (price * qty);
   }, 0);
 
-  // Nếu chưa có token thì không render gì cả (để useEffect navigate đi)
   if (!token) return null;
 
   return (
@@ -150,7 +143,6 @@ const CartPage = () => {
           <div style={{ width: "10%", textAlign: "center" }}>Thao Tác</div>
         </div>
 
-        {/* Kiểm tra cart.length an toàn */}
         {!cart || cart.length === 0 ? (
           <div className="cart-empty-state">
             <p>Giỏ hàng của bạn còn trống.</p>
@@ -262,7 +254,7 @@ const CartPage = () => {
                   </span>
                 </div>
                 <button
-                  onClick={handleGoToCheckout} // Gọi hàm vừa tạo ở trên
+                  onClick={handleGoToCheckout}
                   className="btn-checkout-main"
                 >
                   MUA HÀNG

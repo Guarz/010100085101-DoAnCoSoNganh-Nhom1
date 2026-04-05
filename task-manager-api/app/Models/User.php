@@ -26,10 +26,10 @@ class User extends Authenticatable
     public $incrementing = true;
     public function GioHang()
     {
-        return $this->hasOne(GioHang::class, 'IdGH', 'IdGH');
+        return $this->hasOne(GioHang::class, 'IdUser', 'IdUser');
     }
     public function DonHang()
     {
-        return $this->hasMany(DonHang::class, 'IdDH', 'IdDH');
+        return $this->hasMany(DonHang::class, 'IdUser', 'IdUser');
     }
 }

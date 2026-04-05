@@ -14,7 +14,7 @@ class GioHang extends Model
     {
         return $this->hasMany(ChiTietGioHang::class, 'IdGH', 'IdGH');
     }
-    public function user()
+    public function User()
     {
         return $this->belongsTo(User::class, 'IdUser', 'IdUser');
     }

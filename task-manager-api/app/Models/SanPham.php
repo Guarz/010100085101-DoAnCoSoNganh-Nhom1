@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 use App\Models\LoaiSP;
 use App\Models\AnhSP;
-use App\Models\ChiTietSanPham;
 use App\Models\ChiTietGioHang;
 use App\Models\ChiTietDonHang;
 
@@ -25,21 +24,18 @@ class SanPham extends Model
         'TenSP',
         'MoTa',
         'NgayTao',
-        'IdCT',
-        'IdAnh'
+        'Gia',
+        'Size'
     ];
 
     public function LoaiSP()
     {
         return $this->belongsTo(LoaiSP::class, 'IdLoai', 'IdLoai');
     }
-    public function ChiTietSanPham()
-    {
-        return $this->belongsTo(ChiTietSanPham::class, 'IdCT', 'IdCT');
-    }
     public function AnhSP()
     {
-        return $this->hasMany(AnhSP::class, 'IdAnh', 'IdAnh');
+        // SanPham có nhiều ảnh, khóa ngoại nằm bên bảng AnhSP là IdSP
+        return $this->hasMany(AnhSP::class, 'IdSP', 'IdSP');
     }
 
     public function ChiTietGioHang()
