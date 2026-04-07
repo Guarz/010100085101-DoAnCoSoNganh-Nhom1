@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "../style/UserOrders.css";
+import "../style/OrderCard.css";
 
-const UserOrders = () => {
+const OrderCard = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expandedOrderId, setExpandedOrderId] = useState(null);
@@ -184,4 +184,4 @@ const UserOrders = () => {
   );
 };
 
-export default UserOrders;
+export default OrderCard;
