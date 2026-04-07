@@ -1,73 +1,101 @@
-/* ===== TABLE ADMIN CHUNG ===== */
+/* ===== TABLE ADMIN CHUNG - ĐÃ SỬA THẲNG HÀNG ===== */
 
 table {
     width: 100%;
     border-collapse: collapse;
-    table-layout: fixed;
+    /* table-layout: fixed; <-- Bỏ cái này nếu bạn muốn cột tự co giãn theo nội dung */
     background: white;
 }
 
 /* HEADER */
-
 thead {
     background: #f8bbd0;
+    /* Màu hồng của bạn */
 }
 
 th {
-    padding: 12px;
-    text-align: center;
+    padding: 15px 20px;
+    /* CHÍNH Ở ĐÂY: Chuyển từ center sang left để chữ tiêu đề và nội dung cùng bắt đầu từ một lề */
+    text-align: left;
     font-weight: 600;
+    color: #333;
 }
 
 /* BODY */
-
 td {
-    padding: 12px;
-    text-align: center;
+    padding: 15px 20px;
+    /* CHÍNH Ở ĐÂY: Căn trái để thẳng hàng với tiêu đề */
+    text-align: left;
     vertical-align: middle;
 }
 
-/* ROW */
+/* Xử lý riêng cho cột HÀNH ĐỘNG (Cột cuối cùng) */
+th:last-child,
+td:last-child {
+    text-align: center;
+    /* Riêng cột nút bấm thì cho ra giữa cho đẹp */
+}
 
+td:last-child {
+    display: flex;
+    justify-content: center;
+    /* Căn giữa các nút bấm */
+    align-items: center;
+    gap: 8px;
+    /* Khoảng cách giữa nút Sửa và Xóa */
+    border-bottom: none;
+    /* Tránh lỗi border khi dùng flex */
+}
+
+/* Xử lý riêng cho cột ID (Cột đầu tiên) thường là số nên có thể để giữa hoặc trái */
+th:first-child,
+td:first-child {
+    width: 80px;
+    /* Cố định độ rộng cột ID */
+}
+
+/* ROW */
 tbody tr {
     border-bottom: 1px solid #eee;
 }
 
 tbody tr:hover {
-    background: #f9f9f9;
+    background: #fff5f8;
+    /* Đổi màu hover hồng nhạt cho đồng bộ */
 }
 
 /* ẢNH SẢN PHẨM */
-
 td img {
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
     object-fit: cover;
-    border-radius: 8px;
+    border-radius: 6px;
+    display: block;
+    /* Tránh khoảng trống thừa dưới ảnh */
 }
 
-/* BUTTON */
-
+/* BUTTON - Giữ nguyên logic của bạn nhưng tinh chỉnh padding */
 .edit-btn {
-    background: orange;
+    background: #4fc3f7;
+    /* Đổi sang màu xanh như trong hình bạn chụp */
     color: white;
     border: none;
-    padding: 6px 10px;
-    border-radius: 6px;
+    padding: 6px 12px;
+    border-radius: 4px;
     cursor: pointer;
-    margin-right: 5px;
 }
 
 .delete-btn {
-    background: red;
-    color: white;
-    border: none;
-    padding: 6px 10px;
-    border-radius: 6px;
+    background: #ffcdd2;
+    /* Màu đỏ nhạt cho nút xóa */
+    color: #ef5350;
+    border: 1px solid #ef5350;
+    padding: 6px 12px;
+    border-radius: 4px;
     cursor: pointer;
 }
 
 .edit-btn:hover,
 .delete-btn:hover {
-    opacity: 0.8;
+    opacity: 0.7;
 }

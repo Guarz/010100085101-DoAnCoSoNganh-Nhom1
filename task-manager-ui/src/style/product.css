@@ -1,8 +1,16 @@
+/* ===== LAYOUT CHUNG ===== */
 .product-page {
     padding: 40px;
     background: linear-gradient(135deg, #f6f9ff, #e8f0ff);
     min-height: 100vh;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.title {
+    margin-bottom: 25px;
+    font-size: 26px;
+    font-weight: 700;
+    color: #333;
 }
 
 /* NÚT QUAY LẠI */
@@ -23,14 +31,6 @@
     transform: translateY(-2px);
 }
 
-/* TITLE */
-.title {
-    margin-bottom: 25px;
-    font-size: 26px;
-    font-weight: 700;
-    color: #333;
-}
-
 /* FORM CARD */
 .product-card {
     background: white;
@@ -40,160 +40,32 @@
     margin-bottom: 35px;
 }
 
-/* GRID FORM */
 .form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 15px;
 }
 
-/* INPUT */
 .form-grid input,
 .form-grid select {
     padding: 10px 12px;
     border: 1px solid #ddd;
     border-radius: 8px;
     font-size: 14px;
-    transition: all .2s;
 }
 
-.form-grid input:focus,
-.form-grid select:focus {
-    outline: none;
-    border-color: #4f6df5;
-    box-shadow: 0 0 0 2px rgba(79, 109, 245, 0.1);
-}
-
-/* BUTTON ADD */
-.add-btn {
-    margin-top: 20px;
-    padding: 12px 20px;
-    background: #ff4081;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all .25s;
-}
-
-.add-btn:hover {
-    background: #e91e63;
-    transform: translateY(-2px);
-}
-
-/* PRODUCT LIST */
-.product-list {
-    background: white;
-    padding: 25px;
-    border-radius: 14px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-}
-
-/* TABLE */
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-thead {
-    background: #f5f7ff;
-}
-
-th {
-    padding: 12px;
-    font-weight: 600;
-    color: #444;
-}
-
-td {
-    padding: 12px;
-    border-top: 1px solid #eee;
-}
-
-tr:hover {
-    background: #fafbff;
-}
-
-/* IMAGE */
-td img {
-    border-radius: 6px;
-}
-
-/* BUTTONS */
-.edit-btn {
-    background: #ff9800;
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 6px;
-    margin-right: 6px;
-    cursor: pointer;
-    transition: .2s;
-}
-
-.edit-btn:hover {
-    background: #fb8c00;
-}
-
-.delete-btn {
-    background: #f44336;
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: .2s;
-}
-
-.delete-btn:hover {
-    background: #d32f2f;
-}
-/* Container chứa các nút bấm */
+/* NÚT TRONG FORM (THÊM/HỦY) */
 .form-actions {
     display: flex;
     gap: 15px;
     margin-top: 20px;
 }
 
-/* Nút chính (Thêm/Cập nhật) */
-.add-btn {
-    background: linear-gradient(135deg, #6e8efb, #a777e3);
-    color: white;
-    border: none;
-    padding: 12px 25px;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(110, 142, 251, 0.3);
-}
-
-.add-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(110, 142, 251, 0.4);
-}
-/* Badge loại sản phẩm trong bảng */
-.badge-cat {
-    background-color: #e3f2fd;
-    color: #1976d2;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 600;
-}
-/* Container chứa các nút bấm */
-.form-actions {
+.add-btn,
+.cancel-btn {
+    min-width: 180px;
+    height: 45px;
     display: flex;
-    gap: 15px;
-    margin-top: 20px;
-}
-
-/* Áp dụng chung cho cả nút Thêm/Cập nhật và nút Hủy để chúng bằng nhau */
-.add-btn, .cancel-btn {
-    min-width: 180px;       /* Độ rộng cố định để 2 nút bằng nhau */
-    height: 45px;          /* Chiều cao bằng nhau */
-    display: flex;         /* Căn giữa chữ trong nút */
     align-items: center;
     justify-content: center;
     border-radius: 8px;
@@ -201,36 +73,117 @@ td img {
     cursor: pointer;
     transition: all 0.3s ease;
     font-size: 14px;
-    border: none;          /* Bỏ viền mặc định */
+    border: none;
 }
 
-/* Nút chính (Thêm/Cập nhật) */
 .add-btn {
     background: linear-gradient(135deg, #6e8efb, #a777e3);
     color: white;
     box-shadow: 0 4px 15px rgba(110, 142, 251, 0.3);
-    margin-top: 0;         /* Ghi đè lại margin-top nếu có */
 }
 
-.add-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(110, 142, 251, 0.4);
-}
-
-/* Nút Hủy bỏ */
 .cancel-btn {
-    background-color: #f58f8f;
-    color: #e05555;
-    border: 1px solid #ddd; /* Nút hủy nên có viền nhẹ để phân biệt */
+    background-color: #f5f5f5;
+    color: #666;
+    border: 1px solid #ddd;
 }
 
-.cancel-btn:hover {
-    background-color: #e5e5e5;
-    transform: translateY(-2px);
+/* ===== PHẦN BẢNG DANH SÁCH (SỬA LỖI LỆCH HÀNG) ===== */
+.product-list {
+    background: white;
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Header bảng màu hồng của bạn */
+thead {
+    background: #f8bbd0;
+}
+
+th {
+    padding: 15px;
+    font-weight: 600;
+    color: #333;
+    text-align: left;
+    /* Tiêu đề căn trái */
+}
+
+td {
+    padding: 15px;
+    border-top: 1px solid #eee;
+    text-align: left;
+    /* Nội dung căn trái để thẳng hàng với tiêu đề */
+    vertical-align: middle;
+}
+
+/* Căn giữa riêng cột Ảnh (cột 1) */
+th:first-child,
+td:first-child {
+    text-align: center;
+    width: 100px;
+}
+
+/* Căn giữa riêng cột Hành động (cột cuối) */
+th:last-child,
+td:last-child {
+    text-align: center;
+    width: 160px;
+}
+
+td:last-child {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+/* ẢNH TRONG BẢNG */
 td img {
-  width: 60px;
-  height: 60px;
-  object-fit: cover;
-  border-radius: 8px;
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    display: inline-block;
+}
+
+/* BADGE LOẠI */
+.badge-cat {
+    background-color: #e3f2fd;
+    color: #1976d2;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+/* NÚT TRONG BẢNG (SỬA/XÓA) */
+.edit-btn,
+.delete-btn {
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: none;
+    color: white;
+    font-size: 13px;
+}
+
+.edit-btn {
+    background: #4fc3f7;
+}
+
+/* Màu xanh như hình bạn chụp */
+.delete-btn {
+    background: #ffcdd2;
+    color: #ef5350;
+    border: 1px solid #ef5350;
+}
+
+tr:hover {
+    background: #fafbff;
 }
