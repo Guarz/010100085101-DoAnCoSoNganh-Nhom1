@@ -11,24 +11,44 @@ class OrderController extends Controller
     // Lấy danh sách đơn hàng
     public function index()
     {
-        $orders = DonHang::with(['User', 'TrangThai', 'chiTiet.sanPham'])
-            ->get();
+        $orders = DonHang::with([
+            'User',
+            'TrangThai',
+            'chiTiet.sanPham'
+        ])->orderBy('IdDH', 'desc')->get();
 
-        return response()->json($orders);
+        return response()->json([
+            "success" => true,
+            "data" => $orders
+        ]);
     }
 
-    // Cập nhật trạng thái
+
+    // Cập nhật trạng thái đơn hàng
     public function updateStatus(Request $request, $id)
     {
+        if (!$request->IdTT) {
+            return response()->json([
+                "success" => false,
+                "message" => "Thiếu trạng thái đơn hàng"
+            ], 400);
+        }
+
         $order = DonHang::find($id);
 
         if (!$order) {
-            return response()->json(['message' => 'Không tìm thấy đơn'], 404);
+            return response()->json([
+                "success" => false,
+                "message" => "Không tìm thấy đơn hàng"
+            ], 404);
         }
 
-        $order->IdTT = $request->IdTT; // 1: Đang giao, 2: Hoàn thành
+        $order->IdTT = $request->IdTT;
         $order->save();
 
-        return response()->json(['message' => 'Cập nhật thành công']);
+        return response()->json([
+            "success" => true,
+            "message" => "Cập nhật trạng thái thành công"
+        ]);
     }
 }

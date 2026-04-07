@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../../style/userManagement.css";
 import "../../style/table.css";
+
 function UserManagement() {
 
     const navigate = useNavigate();
@@ -11,7 +12,17 @@ function UserManagement() {
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
 
-    // 🔥 STATE EDIT
+    // ========================
+    // ADD USER
+    // ========================
+    const [showAdd, setShowAdd] = useState(false);
+    const [newName, setNewName] = useState("");
+    const [newEmail, setNewEmail] = useState("");
+    const [newPassword, setNewPassword] = useState("");
+
+    // ========================
+    // EDIT USER
+    // ========================
     const [editingUser, setEditingUser] = useState(null);
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
@@ -40,11 +51,45 @@ function UserManagement() {
 
     /*
     ========================
+    ADD USER
+    ========================
+    */
+
+    const addUser = () => {
+
+        if (!newName || !newEmail || !newPassword) {
+            alert("Vui lòng nhập đủ thông tin");
+            return;
+        }
+
+        axios.post("http://127.0.0.1:8000/api/admin/users", {
+            name: newName,
+            email: newEmail,
+            password: newPassword
+        })
+            .then(() => {
+                alert("Thêm người dùng thành công");
+
+                setShowAdd(false);
+                setNewName("");
+                setNewEmail("");
+                setNewPassword("");
+
+                fetchUsers();
+            })
+            .catch(() => {
+                alert("Thêm thất bại");
+            });
+    };
+
+    /*
+    ========================
     DELETE
     ========================
     */
 
     const deleteUser = (id) => {
+
         if (!window.confirm("Bạn chắc chắn muốn xoá user này?")) return;
 
         axios.delete(`http://127.0.0.1:8000/api/admin/users/${id}`)
@@ -70,6 +115,7 @@ function UserManagement() {
     };
 
     const updateUser = () => {
+
         if (!name || !email) {
             alert("Vui lòng nhập đủ tên và email");
             return;
@@ -85,12 +131,13 @@ function UserManagement() {
                 fetchUsers();
             })
             .catch((err) => {
-                console.error("Full Error:", err);
-                // Kiểm tra xem có message cụ thể từ backend không, nếu không thì lấy message mặc định
+
                 const errMsg = err.response?.data?.message || err.message || "Lỗi không xác định";
+
                 alert("Thất bại: " + errMsg);
             });
     };
+
     /*
     ========================
     SEARCH
@@ -127,6 +174,7 @@ function UserManagement() {
                 </div>
 
                 <div>
+
                     <input
                         type="text"
                         placeholder="Tìm kiếm user..."
@@ -142,41 +190,115 @@ function UserManagement() {
                     >
                         Reload
                     </button>
+
+                    <button
+                        className="add-btn"
+                        style={{ marginLeft: "10px" }}
+                        onClick={() => setShowAdd(!showAdd)}
+                    >
+                        + Thêm user
+                    </button>
+
                 </div>
             </div>
 
-            {/* 🔥 FORM EDIT */}
-            {editingUser && (
+
+            {/* FORM ADD USER */}
+            {showAdd && (
+
                 <div className="edit-box">
-                    <h3 style={{ marginBottom: "15px", color: "#333" }}>Sửa thông tin người dùng</h3>
 
-                    <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: "10px" }}>
-                        <input
-                            className="edit-input"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            placeholder="Tên"
-                        />
+                    <h3>Thêm người dùng</h3>
 
-                        <input
-                            className="edit-input"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Email"
-                        />
+                    <input
+                        className="edit-input"
+                        placeholder="Tên"
+                        value={newName}
+                        onChange={(e) => setNewName(e.target.value)}
+                    />
 
-                        <div className="edit-actions">
-                            <button className="btn-update" onClick={updateUser}>
-                                ✓ Cập nhật
-                            </button>
-                            <button className="btn-cancel" onClick={() => setEditingUser(null)}>
-                                ✕ Huỷ
-                            </button>
-                        </div>
+                    <input
+                        className="edit-input"
+                        placeholder="Email"
+                        value={newEmail}
+                        onChange={(e) => setNewEmail(e.target.value)}
+                    />
+
+                    <input
+                        className="edit-input"
+                        placeholder="Mật khẩu"
+                        type="password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                    />
+
+                    <div className="edit-actions">
+
+                        <button
+                            className="btn-update"
+                            onClick={addUser}
+                        >
+                            Thêm
+                        </button>
+
+                        <button
+                            className="btn-cancel"
+                            onClick={() => setShowAdd(false)}
+                        >
+                            Huỷ
+                        </button>
+
                     </div>
+
                 </div>
             )}
+
+
+            {/* FORM EDIT */}
+            {editingUser && (
+
+                <div className="edit-box">
+
+                    <h3>Sửa thông tin người dùng</h3>
+
+                    <input
+                        className="edit-input"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="Tên"
+                    />
+
+                    <input
+                        className="edit-input"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="Email"
+                    />
+
+                    <div className="edit-actions">
+
+                        <button
+                            className="btn-update"
+                            onClick={updateUser}
+                        >
+                            Cập nhật
+                        </button>
+
+                        <button
+                            className="btn-cancel"
+                            onClick={() => setEditingUser(null)}
+                        >
+                            Huỷ
+                        </button>
+
+                    </div>
+
+                </div>
+            )}
+
+
             {/* TABLE */}
+
             <table className="user-table">
 
                 <thead>
@@ -184,7 +306,6 @@ function UserManagement() {
                         <th>ID</th>
                         <th>Tên</th>
                         <th>Email</th>
-                        <th>Ngày tạo</th>
                         <th>Hành động</th>
                     </tr>
                 </thead>
@@ -200,12 +321,7 @@ function UserManagement() {
                             <td>{user.email}</td>
 
                             <td>
-                                {user.created_at
-                                    ? new Date(user.created_at).toLocaleDateString("vi-VN")
-                                    : "Chưa có"}
-                            </td>
 
-                            <td>
                                 <button
                                     className="edit-btn"
                                     onClick={() => startEdit(user)}
@@ -219,6 +335,7 @@ function UserManagement() {
                                 >
                                     Xoá
                                 </button>
+
                             </td>
 
                         </tr>
@@ -226,6 +343,7 @@ function UserManagement() {
                     ))}
 
                 </tbody>
+
             </table>
 
         </div>

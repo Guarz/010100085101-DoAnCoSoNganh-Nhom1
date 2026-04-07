@@ -33,6 +33,7 @@ Route::put('/user/update/{id}', [AuthController::class, 'updateProfile']);
 */
 
 Route::prefix('admin')->group(function () {
+    Route::get('/top-products', [DashboardController::class, 'topProducts']);
 
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index']);
@@ -57,6 +58,7 @@ Route::prefix('admin')->group(function () {
 
     // Users
     Route::get('/users', [UserController::class, 'index']);
+    Route::post('/users', [UserController::class, 'store']);
     Route::put('/users/{id}', [UserController::class, 'update']);
     Route::delete('/users/{id}', [UserController::class, 'destroy']);
 });

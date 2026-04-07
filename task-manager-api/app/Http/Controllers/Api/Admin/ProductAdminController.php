@@ -9,23 +9,24 @@ use Illuminate\Http\Request;
 class ProductAdminController extends Controller
 {
 
-    // Lấy danh sách sản phẩm
+    // =====================================
+    // DANH SÁCH SẢN PHẨM
+    // =====================================
     public function index()
     {
+
         $products = DB::table("sanpham")
 
-            ->join("chitietsanpham", "sanpham.IdCT", "=", "chitietsanpham.IdCT")
-
-            ->leftJoin("anhsp", "sanpham.IdAnh", "=", "anhsp.IdAnh")
-
             ->leftJoin("loaisp", "sanpham.IdLoai", "=", "loaisp.IdLoai")
+            ->leftJoin("anhsp", "sanpham.IdSP", "=", "anhsp.IdSP")
 
             ->select(
                 "sanpham.IdSP as id",
                 "sanpham.TenSP as name",
                 "sanpham.MoTa as description",
+                "sanpham.Gia as price",
+                "sanpham.Size as size",
                 "sanpham.IdLoai as categoryId",
-                "chitietsanpham.Gia as price",
                 "loaisp.TenLoai as category_name",
                 "anhsp.HinhAnh as image"
             )
@@ -34,10 +35,20 @@ class ProductAdminController extends Controller
 
             ->get();
 
+
+        // convert image blob -> base64
         foreach ($products as $p) {
+
             if ($p->image) {
-                $p->image = base64_encode($p->image);
+
+                $p->image = "data:image/jpeg;base64," . base64_encode($p->image);
+
+            } else {
+
+                $p->image = null;
+
             }
+
         }
 
         return response()->json($products);
@@ -45,46 +56,56 @@ class ProductAdminController extends Controller
 
 
 
-    // Thêm sản phẩm
+    // =====================================
+    // THÊM SẢN PHẨM
+    // =====================================
     public function store(Request $request)
     {
+
         try {
 
             DB::beginTransaction();
 
-            if (!$request->name || !$request->price) {
+            // kiểm tra dữ liệu
+            if (!$request->name || !$request->price || !$request->categoryId) {
+
                 return response()->json([
                     "success" => false,
-                    "message" => "Thiếu tên hoặc giá"
-                ]);
+                    "message" => "Thiếu thông tin sản phẩm"
+                ], 400);
+
             }
 
-            $imageId = null;
 
-            if ($request->hasFile("image")) {
-
-                $imageData = file_get_contents($request->file("image"));
-
-                $imageId = DB::table("anhsp")->insertGetId([
-                    "HinhAnh" => $imageData
-                ]);
-            }
-
-            $sizeId = DB::table("sizesp")->value("IdSize") ?? 1;
-
-            $detailId = DB::table("chitietsanpham")->insertGetId([
-                "Gia" => $request->price,
-                "IdSize" => $sizeId
-            ]);
-
+            // thêm sản phẩm
             $productId = DB::table("sanpham")->insertGetId([
+
                 "TenSP" => $request->name,
                 "MoTa" => $request->description ?? "",
+                "Gia" => $request->price,
+                "Size" => $request->size ?? "M",
                 "NgayTao" => now(),
-                "IdLoai" => $request->categoryId,
-                "IdCT" => $detailId,
-                "IdAnh" => $imageId
+                "IdLoai" => $request->categoryId
+
             ]);
+
+
+            // upload ảnh
+            if ($request->hasFile("image")) {
+
+                $file = $request->file("image");
+
+                $imageData = file_get_contents($file->getRealPath());
+
+                DB::table("anhsp")->insert([
+
+                    "IdSP" => $productId,
+                    "HinhAnh" => $imageData
+
+                ]);
+
+            }
+
 
             DB::commit();
 
@@ -100,21 +121,43 @@ class ProductAdminController extends Controller
             return response()->json([
                 "success" => false,
                 "error" => $e->getMessage()
-            ]);
+            ], 500);
+
         }
     }
 
 
 
-    // Xóa sản phẩm
+    // =====================================
+    // XÓA SẢN PHẨM
+    // =====================================
     public function destroy($id)
     {
-        DB::table("sanpham")
-            ->where("IdSP", $id)
-            ->delete();
 
-        return response()->json([
-            "success" => true
-        ]);
+        try {
+
+            DB::beginTransaction();
+
+            DB::table("anhsp")->where("IdSP", $id)->delete();
+
+            DB::table("sanpham")->where("IdSP", $id)->delete();
+
+            DB::commit();
+
+            return response()->json([
+                "success" => true
+            ]);
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                "success" => false,
+                "error" => $e->getMessage()
+            ], 500);
+
+        }
     }
+
 }

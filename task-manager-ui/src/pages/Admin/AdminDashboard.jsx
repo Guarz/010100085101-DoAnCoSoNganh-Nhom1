@@ -205,11 +205,13 @@ function AdminDashboard() {
                     onClick={() => navigate("/admin/users")}
                 />
 
+                {/* 🔥 BẤM VÀO DOANH THU SẼ MỞ TRANG THỐNG KÊ */}
                 <StatBox
                     icon="💰"
                     label="Doanh thu"
                     value={stats.total_revenue}
                     color="#00C853"
+                    onClick={() => navigate("/admin/revenue")}
                 />
 
             </div>

@@ -1,101 +1,128 @@
-/* ===== TABLE ADMIN CHUNG - ĐÃ SỬA THẲNG HÀNG ===== */
+/* ===== TABLE ADMIN CHUNG ===== */
+.admin-page {
+    padding: 30px;
+    min-height: 100vh;
+    background-color: #f5f5f5;
+    font-family: Arial, sans-serif;
+}
 
-table {
+.admin-table {
     width: 100%;
     border-collapse: collapse;
-    /* table-layout: fixed; <-- Bỏ cái này nếu bạn muốn cột tự co giãn theo nội dung */
+    /* cực quan trọng */
+    table-layout: auto;
+    /* cột co giãn */
     background: white;
+    font-size: 16px;
 }
 
 /* HEADER */
-thead {
-    background: #f8bbd0;
-    /* Màu hồng của bạn */
+.admin-table thead {
+    background-color: #f8bbd0;
 }
 
-th {
+.admin-table th {
     padding: 15px 20px;
-    /* CHÍNH Ở ĐÂY: Chuyển từ center sang left để chữ tiêu đề và nội dung cùng bắt đầu từ một lề */
     text-align: left;
+    vertical-align: middle;
+    /* thẳng hàng với td */
     font-weight: 600;
     color: #333;
 }
 
 /* BODY */
-td {
+.admin-table td {
     padding: 15px 20px;
-    /* CHÍNH Ở ĐÂY: Căn trái để thẳng hàng với tiêu đề */
     text-align: left;
     vertical-align: middle;
+    word-break: break-word;
+    height: 50px;
+    /* cố định chiều cao hàng để thẳng */
 }
 
-/* Xử lý riêng cho cột HÀNH ĐỘNG (Cột cuối cùng) */
-th:last-child,
-td:last-child {
-    text-align: center;
-    /* Riêng cột nút bấm thì cho ra giữa cho đẹp */
-}
-
-td:last-child {
-    display: flex;
-    justify-content: center;
-    /* Căn giữa các nút bấm */
-    align-items: center;
-    gap: 8px;
-    /* Khoảng cách giữa nút Sửa và Xóa */
-    border-bottom: none;
-    /* Tránh lỗi border khi dùng flex */
-}
-
-/* Xử lý riêng cho cột ID (Cột đầu tiên) thường là số nên có thể để giữa hoặc trái */
-th:first-child,
-td:first-child {
+/* Cột ID */
+.admin-table th:first-child,
+.admin-table td:first-child {
     width: 80px;
-    /* Cố định độ rộng cột ID */
+    text-align: center;
+}
+
+/* Cột Hành động */
+.admin-table th:last-child,
+.admin-table td:last-child {
+    text-align: center;
+}
+
+.admin-table td:last-child .edit-btn,
+.admin-table td:last-child .delete-btn {
+    display: inline-block;
+    /* Không dùng flex nữa */
+    margin: 0 4px;
+    /* Khoảng cách giữa nút */
 }
 
 /* ROW */
-tbody tr {
+.admin-table tbody tr {
     border-bottom: 1px solid #eee;
 }
 
-tbody tr:hover {
-    background: #fff5f8;
-    /* Đổi màu hover hồng nhạt cho đồng bộ */
+.admin-table tbody tr:hover {
+    background-color: #fff5f8;
 }
 
-/* ẢNH SẢN PHẨM */
-td img {
+/* ẢNH */
+.admin-table td img {
     width: 50px;
     height: 50px;
     object-fit: cover;
     border-radius: 6px;
     display: block;
-    /* Tránh khoảng trống thừa dưới ảnh */
+    vertical-align: middle;
 }
 
-/* BUTTON - Giữ nguyên logic của bạn nhưng tinh chỉnh padding */
+/* BUTTON */
 .edit-btn {
-    background: #4fc3f7;
-    /* Đổi sang màu xanh như trong hình bạn chụp */
+    background-color: #4fc3f7;
     color: white;
     border: none;
     padding: 6px 12px;
     border-radius: 4px;
     cursor: pointer;
+    transition: 0.2s;
 }
 
 .delete-btn {
-    background: #ffcdd2;
-    /* Màu đỏ nhạt cho nút xóa */
+    background-color: #ffcdd2;
     color: #ef5350;
     border: 1px solid #ef5350;
     padding: 6px 12px;
     border-radius: 4px;
     cursor: pointer;
+    transition: 0.2s;
 }
 
 .edit-btn:hover,
 .delete-btn:hover {
     opacity: 0.7;
+}
+
+/* RESPONSIVE */
+@media screen and (max-width: 768px) {
+
+    .admin-table th,
+    .admin-table td {
+        padding: 8px 10px;
+        font-size: 14px;
+    }
+
+    .admin-table td img {
+        width: 40px;
+        height: 40px;
+    }
+
+    .edit-btn,
+    .delete-btn {
+        padding: 4px 8px;
+        font-size: 12px;
+    }
 }

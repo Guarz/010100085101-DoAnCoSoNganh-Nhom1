@@ -7,20 +7,24 @@ use App\Models\SanPham;
 
 class AnhSP extends Model
 {
+    // Tên bảng
     protected $table = 'anhsp';
 
+    // Khóa chính
     protected $primaryKey = 'IdAnh';
 
+    // Không dùng created_at / updated_at
     public $timestamps = false;
 
+    // Các cột cho phép thêm dữ liệu
     protected $fillable = [
+        'IdSP',
         'HinhAnh'
     ];
 
-    // Một sản phẩm có thể có nhiều ảnh
+    // Quan hệ: ảnh thuộc về sản phẩm
     public function sanpham()
-{
-    // AnhSP thuộc về SanPham, liên kết qua cột IdSP
-    return $this->belongsTo(SanPham::class, 'IdSP', 'IdSP');
-}
+    {
+        return $this->belongsTo(SanPham::class, 'IdSP', 'IdSP');
+    }
 }

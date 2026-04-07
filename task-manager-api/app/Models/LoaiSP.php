@@ -3,14 +3,27 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\SanPham;
 
 class LoaiSP extends Model
 {
-    protected $table = 'LoaiSP'; // Tên bảng trong DB
-    protected $primaryKey = 'IdLoai'; // Khóa chính
+    // Tên bảng trong database
+    protected $table = 'loaisp';
+
+    // Khóa chính
+    protected $primaryKey = 'IdLoai';
+
+    // Bảng không có created_at và updated_at
+    public $timestamps = false;
+
+    // Các cột cho phép thêm dữ liệu
+    protected $fillable = [
+        'TenLoai'
+    ];
+
+    // Quan hệ: 1 loại có nhiều sản phẩm
     public function SanPham()
     {
-        // Một loại có nhiều sản phẩm, liên kết qua IdLoai
         return $this->hasMany(SanPham::class, 'IdLoai', 'IdLoai');
     }
 }

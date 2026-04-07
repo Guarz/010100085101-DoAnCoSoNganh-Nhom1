@@ -1,0 +1,43 @@
+.revenue-page {
+    padding: 30px;
+    min-height: 100vh;
+    background-color: #f5f5f5;
+    font-family: Arial, sans-serif;
+}
+
+.back-btn {
+    margin-bottom: 20px;
+    padding: 10px 15px;
+    background-color: #e91e63;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.back-btn:hover {
+    background-color: #d81b60;
+}
+
+.revenue-page h2 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.revenue-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+}
+
+.revenue-table th,
+.revenue-table td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+}
+
+.revenue-table th {
+    background-color: #f0f0f0;
+}

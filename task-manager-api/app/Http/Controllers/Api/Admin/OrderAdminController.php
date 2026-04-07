@@ -13,13 +13,13 @@ class OrderAdminController extends Controller
     public function index()
     {
         $orders = DB::table("donhang")
-            ->join("user", "donhang.IdUser", "=", "user.IdUser")
+            ->join("users", "donhang.IdUser", "=", "users.IdUser")
             ->leftJoin("chitietdonhang", "donhang.IdDH", "=", "chitietdonhang.IdDH")
             ->leftJoin("sanpham", "chitietdonhang.IdSP", "=", "sanpham.IdSP")
 
             ->select(
                 "donhang.IdDH as id",
-                "user.Ten as customer",
+                "users.Ten as customer",
                 DB::raw("GROUP_CONCAT(sanpham.TenSP SEPARATOR ', ') as products"),
                 DB::raw("SUM(chitietdonhang.TongTien) as total"),
                 "donhang.IdTT as status",
@@ -28,13 +28,12 @@ class OrderAdminController extends Controller
 
             ->groupBy(
                 "donhang.IdDH",
-                "user.Ten",
+                "users.Ten",
                 "donhang.IdTT",
                 "donhang.NgayDat"
             )
 
             ->orderBy("donhang.IdDH", "desc")
-
             ->get();
 
         return response()->json($orders);
@@ -46,7 +45,6 @@ class OrderAdminController extends Controller
     public function show($id)
     {
         $items = DB::table("chitietdonhang")
-
             ->join("sanpham", "chitietdonhang.IdSP", "=", "sanpham.IdSP")
 
             ->select(
@@ -56,7 +54,6 @@ class OrderAdminController extends Controller
             )
 
             ->where("chitietdonhang.IdDH", $id)
-
             ->get();
 
         return response()->json($items);
@@ -64,7 +61,7 @@ class OrderAdminController extends Controller
 
 
 
-    // Cập nhật trạng thái
+    // Cập nhật trạng thái đơn hàng
     public function updateStatus(Request $request, $id)
     {
         DB::table("donhang")
@@ -83,9 +80,19 @@ class OrderAdminController extends Controller
     // Xóa đơn hàng
     public function destroy($id)
     {
+        DB::beginTransaction();
+
+        // Xóa chi tiết đơn hàng trước
+        DB::table("chitietdonhang")
+            ->where("IdDH", $id)
+            ->delete();
+
+        // Sau đó xóa đơn hàng
         DB::table("donhang")
             ->where("IdDH", $id)
             ->delete();
+
+        DB::commit();
 
         return response()->json([
             "success" => true

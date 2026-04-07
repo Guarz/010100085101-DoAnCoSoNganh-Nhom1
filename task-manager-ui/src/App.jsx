@@ -34,6 +34,7 @@ import ProductDetail from "./pages/Admin/ProductDetail";
 import AdminOrders from "./pages/Admin/AdminOrders";
 import CategoryManagement from "./pages/Admin/CategoryManagement";
 import UserManagement from "./pages/Admin/UserManagement";
+import RevenueDetail from "./pages/Admin/RevenueDetail";
 
 function App() {
 
@@ -208,6 +209,14 @@ function App() {
           element={
             isAdmin
               ? <UserManagement />
+              : <Navigate to="/admin/login" />
+          }
+        />
+        <Route
+          path="/admin/revenue"
+          element={
+            isAdmin
+              ? <RevenueDetail />
               : <Navigate to="/admin/login" />
           }
         />
