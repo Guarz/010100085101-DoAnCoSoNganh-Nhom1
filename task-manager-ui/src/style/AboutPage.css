@@ -1,0 +1,42 @@
+/* Hero section với ảnh nền mờ */
+.about-hero {
+    height: 400px;
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+                url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1500');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed; /* Tạo hiệu ứng Parallax nhẹ */
+}
+
+/* Màu hồng thương hiệu */
+.text-pink {
+    color: #d63384;
+}
+
+/* Hiệu ứng hover cho các thẻ giá trị */
+.card-hover {
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.card-hover:hover {
+    transform: translateY(-10px);
+    border-color: #d63384;
+    box-shadow: 0 10px 30px rgba(214, 51, 132, 0.1) !important;
+}
+
+/* Font chữ mượt hơn */
+.about-page {
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+}
+
+/* Responsive tinh chỉnh */
+@media (max-width: 768px) {
+    .about-hero {
+        height: 300px;
+    }
+    .display-4 {
+        font-size: 2.5rem;
+    }
+}

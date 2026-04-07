@@ -25,6 +25,7 @@ import UserProductDetail from "./pages/User/ProductDetail";
 import ProductList from "./pages/User/ProductList";
 import Checkout from "./pages/User/Checkout";
 import Profile from "./pages/User/Profile";
+import AboutPage from "./pages/User/AboutPage";
 
 // ADMIN PAGES
 import AdminHome from "./pages/Admin/AdminHome";
@@ -105,7 +106,7 @@ function App() {
           <Route path="/login" element={<Login setUser={setUser} />} />
 
           <Route path="/register" element={<Register />} />
-
+          <Route path="/about" element={<AboutPage />} />
           <Route
             path="/profile"
             element={user ? <Profile /> : <Navigate to="/login" />}
