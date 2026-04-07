@@ -107,7 +107,6 @@ class AuthController extends Controller
             "Ten" => $request->ten,
             "Email" => $request->email,
             "Password" => $request->password,
-            "NgayTao" => now()
         ]);
 
         return response()->json([
@@ -117,7 +116,6 @@ class AuthController extends Controller
                 "id" => $user->IdUser,
                 "name" => $user->Ten,
                 "email" => $user->Email,
-                "role" => "user"
             ]
         ]);
     }

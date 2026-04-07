@@ -14,7 +14,7 @@ class User extends Authenticatable
     use HasApiTokens, Notifiable;
 
     // Tên bảng trong database
-    protected $table = 'users';
+    protected $table = 'user';
 
     // Khóa chính
     protected $primaryKey = 'IdUser';
