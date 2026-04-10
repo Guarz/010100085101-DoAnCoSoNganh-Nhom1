@@ -21,4 +21,5 @@ class ChiTietDonHang extends Model
     {
         return $this->belongsTo(SanPham::class, 'IdSP', 'IdSP');
     }
+    public $timestamps = false;
 }

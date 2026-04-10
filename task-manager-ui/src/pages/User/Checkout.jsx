@@ -71,12 +71,12 @@ const Checkout = () => {
         try {
             const response = await axios.post('http://127.0.0.1:8000/api/orders', orderPayload);
             
-            if (response.data.status === 'success') {
-                alert("✅ ĐẶT HÀNG THÀNH CÔNG!");
+           if (response.data.success === true) { 
+                alert(" ĐẶT HÀNG THÀNH CÔNG!");
                 localStorage.removeItem('cart');
                 localStorage.removeItem('checkout_items');
                 setCart([]);
-                navigate('/orders');
+                navigate('/orders'); 
             }
         } catch (error) {
             console.error("Lỗi:", error.response?.data);

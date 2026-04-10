@@ -138,4 +138,21 @@ class OrderController extends Controller
 
         return response()->json(['message' => 'Hủy đơn hàng thành công']);
     }
+    public function getUserOrders($userId)
+    {
+        try {
+            $orders = DonHang::with([
+                'trangThai',                
+                'chiTiet'   
+            ])
+            ->where('IdUser', $userId)
+            ->orderBy('IdDH', 'desc')       
+            ->get();
+            return response()->json($orders);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Lỗi khi lấy danh sách đơn hàng: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

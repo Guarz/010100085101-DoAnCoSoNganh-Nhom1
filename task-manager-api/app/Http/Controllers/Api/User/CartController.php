@@ -38,7 +38,31 @@ class CartController extends Controller
             'products' => $items
         ]);
     }
+    /** Cập nhật số lượng sản phẩm trong giỏ */
+public function updateQty(Request $request)
+{
+    $request->validate([
+        'IdUser' => 'required',
+        'IdSP' => 'required',
+        'SoLuong' => 'required|integer|min:1'
+    ]);
 
+    $gioHang = GioHang::where('IdUser', $request->IdUser)->first();
+
+    if (!$gioHang) {
+        return response()->json(['success' => false, 'message' => 'Giỏ hàng không tồn tại'], 404);
+    }
+    $updated = DB::table('ChiTietGioHang')
+        ->where('IdGH', $gioHang->IdGH)
+        ->where('IdSP', $request->IdSP)
+        ->update(['SoLuong' => $request->SoLuong]);
+
+    if ($updated) {
+        return response()->json(['success' => true, 'message' => 'Đã cập nhật số lượng']);
+    }
+
+    return response()->json(['success' => false, 'message' => 'Không tìm thấy sản phẩm trong giỏ'], 404);
+}
     /** Thêm sản phẩm vào giỏ */
     public function addToCart(Request $request)
     {
