@@ -72,7 +72,7 @@ public function updateQty(Request $request)
             'SoLuong' => 'required|integer|min:1'
         ]);
 
-        // Kiểm tra xem ID sản phẩm gửi lên có thực sự tồn tại trong máy chủ không
+        
         $product = SanPham::find($request->IdSP);
         if (!$product) {
             return response()->json(['success' => false, 'message' => 'Sản phẩm không tồn tại!'], 404);
@@ -85,13 +85,13 @@ public function updateQty(Request $request)
             ->first();
 
         if ($chiTiet) {
-            // Vẫn dùng DB::table cho Update vì bảng ChiTietGioHang không có khóa chính
+            
             DB::table('ChiTietGioHang')
                 ->where('IdGH', $gioHang->IdGH)
                 ->where('IdSP', $request->IdSP)
                 ->update(['SoLuong' => $chiTiet->SoLuong + $request->SoLuong]);
         } else {
-            // Dùng Model ChiTietGioHang để Create
+            
             ChiTietGioHang::create([
                 'IdGH' => $gioHang->IdGH,
                 'IdSP' => $request->IdSP,
@@ -113,5 +113,27 @@ public function updateQty(Request $request)
             ->delete();
 
         return response()->json(['success' => true, 'message' => 'Xóa thành công']);
+    }
+    public function removeselected(Request $request)
+    {
+        $request->validate([
+            'IdUser' => 'required',
+            'listIdSP' => 'required|array', 
+        ]);
+        $gioHang = GioHang::where('IdUser', $request->IdUser)->first();
+        if (!$gioHang) {
+            return response()->json(['success' => false, 'message' => 'Không tìm thấy giỏ hàng'], 404);
+        }
+        $deleted = ChiTietGioHang::where('IdGH', $gioHang->IdGH)
+            ->whereIn('IdSP', $request->listIdSP)
+            ->delete();
+        if ($deleted) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã xóa các sản phẩm được chọn',
+                'count' => $deleted
+            ]);
+        }
+        return response()->json(['success' => false, 'message' => 'Không có sản phẩm nào được xóa'], 400);
     }
 }

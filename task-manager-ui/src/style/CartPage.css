@@ -60,44 +60,60 @@
 .cart-qty-wrapper {
     display: flex;
     align-items: center;
+    justify-content: center;
     border: 1px solid #ddd;
     border-radius: 25px;
     overflow: hidden;
     background: #fff;
+    width: fit-content; 
+    height: 32px; 
 }
 
 .cart-qty-btn {
     width: 35px;
-    height: 35px;
+    height: 100%;
     background: #fff;
     border: none;
     font-size: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s;
+    transition: all 0.3s ease; 
     color: #555;
+    cursor: pointer;
+    padding: 0;
 }
 
 .cart-qty-btn:hover:not(:disabled) {
-    background: #f0f0f0;
-    color: #d81b60;
-}
-
-.cart-qty-btn:disabled {
-    color: #ccc;
-    cursor: not-allowed;
+    background-color: #d81b60; 
+    color: #ffffff;            
 }
 
 .cart-qty-input {
-    width: 45px;
-    height: 35px;
+    width: 40px;
+    height: 100%; 
     border: none;
     text-align: center;
-    font-size: 15px;
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: 700;
     outline: none;
     background: transparent;
+
+    padding: 0;          
+    margin: 0;           
+    line-height: 32px;    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.cart-qty-btn:active:not(:disabled) {
+    background-color: #ad1457; 
+    transform: scale(0.95);    
+}
+.cart-qty-btn:disabled {
+    color: #ccc;
+    background-color: #f9f9f9;
+    cursor: not-allowed;
 }
 
 .cart-footer-bar {

@@ -69,6 +69,7 @@ Route::get('/products/{id}', [ProductController::class, 'show']);
 Route::post('/cart/add', [CartController::class, 'addToCart']);
 Route::post('/cart/update', [CartController::class, 'updateQty']);
 Route::post('/cart/remove', [CartController::class, 'removeItem']);
+Route::post('/cart/removeselected', [CartController::class, 'removeselected']);
 Route::get('/cart/{idUser}', [CartController::class, 'getCartByUserId']);
 Route::post('/orders', [OrderController::class, 'store']);
 Route::get('/orders/user/{id}', [OrderController::class, 'getUserOrders']);

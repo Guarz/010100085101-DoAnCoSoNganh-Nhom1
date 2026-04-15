@@ -9,19 +9,13 @@ const CartPage = () => {
   const { cart, setCart } = useOutletContext();
   const [selectedIds, setSelectedIds] = useState([]);
   const [loading, setLoading] = useState(true);
-  
-  // Thêm state để kiểm tra đăng nhập chắc chắn
   const [isLogged, setIsLogged] = useState(false);
 
   useEffect(() => {
-    // Đọc token và user ngay tại đây để đảm bảo tính thời điểm
     const token = localStorage.getItem("token");
     const userStr = localStorage.getItem("user");
     const userData = userStr ? JSON.parse(userStr) : null;
 
-    console.log("Token hiện tại:", token);
-    console.log("User Data hiện tại:", userData);
-    
     if (!userData || !userData.id) {
       setIsLogged(false);
       setLoading(false);
@@ -109,8 +103,33 @@ const CartPage = () => {
   const selectedTotal = (cart || [])
     .filter((item) => selectedIds.includes(item.IdSP))
     .reduce((sum, item) => sum + Number(item.Gia) * Number(item.SoLuong), 0);
+    
+  const removeSelectedItems = async () => {
+    if (selectedIds.length === 0) {
+      alert("Vui lòng chọn ít nhất một sản phẩm để xóa!");
+      return;
+    }
 
-  // 1. CHỜ TẢI DỮ LIỆU
+    if (window.confirm(`Bạn có chắc chắn muốn xóa ${selectedIds.length} sản phẩm đã chọn?`)) {
+      const token = localStorage.getItem("token");
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      const updatedCart = cart.filter((item) => !selectedIds.includes(item.IdSP));
+      setCart(updatedCart);
+      const idsToDelete = [...selectedIds]; 
+      setSelectedIds([]); 
+
+      try {
+        await axios.post(
+          "http://127.0.0.1:8000/api/cart/removeselected",
+          { IdUser: user.id, listIdSP: idsToDelete },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      } catch (error) {
+        console.error("Lỗi xóa nhiều sản phẩm:", error);
+        alert("Có lỗi xảy ra khi xóa sản phẩm. Vui lòng thử lại!");
+      }
+    }
+  };
   if (loading)
     return (
       <div className="text-center mt-5 py-5">
@@ -118,7 +137,6 @@ const CartPage = () => {
       </div>
     );
 
-  // 2. NẾU CHƯA ĐĂNG NHẬP (Dựa vào state isLogged thay vì biến const ngoài)
   if (!isLogged) {
     return (
       <div className="container mt-5">
@@ -134,7 +152,6 @@ const CartPage = () => {
     );
   }
 
-  // 3. NẾU ĐÃ ĐĂNG NHẬP
   return (
     <div className="container mt-4 mb-5">
       <h3 className="fw-bold mb-4 px-2 px-md-0">Giỏ hàng của bạn</h3>

@@ -46,26 +46,25 @@ const CartItemCard = ({
           </span>
         </div>
 
-        <div className="col-lg-2 col-md-3 col-6 d-flex justify-content-center">
-          <div
-            className="input-group input-group-sm"
-            style={{ width: "110px" }}
-          >
+        <div className="col-lg-2 col-md-3 col-6 d-flex justify-content-center align-items-center">
+          <div className="cart-qty-wrapper">
             <button
-              className="btn btn-outline-secondary border-end-0 rounded-start-pill"
+              className="cart-qty-btn"
               onClick={() => onUpdateQty(item.IdSP, item.SoLuong - 1)}
-              disabled={item.SoLuong <= 1} 
+              disabled={item.SoLuong <= 1}
             >
               <i className="bi bi-dash"></i>
             </button>
+
             <input
-              type="text"
-              className="form-control text-center border-start-0 border-end-0 bg-white"
+              type="number"
+              className="cart-qty-input"
               value={item.SoLuong}
               readOnly
             />
+
             <button
-              className="btn btn-outline-secondary border-start-0 rounded-end-pill"
+              className="cart-qty-btn"
               onClick={() => onUpdateQty(item.IdSP, item.SoLuong + 1)}
             >
               <i className="bi bi-plus"></i>
