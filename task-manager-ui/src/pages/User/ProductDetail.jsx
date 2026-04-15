@@ -80,13 +80,17 @@ const UserProductDetail = () => {
   if (!product) return <div className="text-center mt-5">Sản phẩm không tồn tại.</div>;
 
   let imageSrc = "https://via.placeholder.com/500";
-  if (product.HinhAnh && typeof product.HinhAnh === "string") {
-    imageSrc = product.HinhAnh.startsWith("data:image")
-      ? product.HinhAnh
-      : `data:image/jpeg;base64,${product.HinhAnh}`;
-  } else if (product.HinhAnh) {
-    console.warn("Dữ liệu HinhAnh không phải là chuỗi:", product.HinhAnh);
-  }
+let imgData = product.HinhAnh;
+if (Array.isArray(imgData) && imgData.length > 0) {
+  imgData = imgData[0]; 
+}
+if (imgData && typeof imgData === "string") {
+  imageSrc = imgData.startsWith("data:image")
+    ? imgData
+    : `data:image/jpeg;base64,${imgData}`;
+} else if (imgData) {
+  console.warn("Dữ liệu ảnh không hợp lệ:", imgData);
+}
 
   return (
     <div className="container mt-5 pb-5 position-relative">

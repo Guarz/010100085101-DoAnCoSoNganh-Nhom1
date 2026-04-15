@@ -27,7 +27,7 @@ class ProductController extends Controller
                     'TenLoai' => $p->LoaiSP->TenLoai ?? 'Khác',
                     'Gia'     => $p->Gia,
                     'Size'    => $p->Size,
-                    'HinhAnh' => $firstImage ? 'data:image/jpeg;base64,' . base64_encode($firstImage->Anh) : null,
+                    'HinhAnh' => $firstImage ? 'data:image/jpeg;base64,' . base64_encode($firstImage->HinhAnh) : null,
                 ];
             });
 
@@ -51,7 +51,7 @@ class ProductController extends Controller
             }
 
             $images = $p->AnhSP->map(function($img) {
-                return 'data:image/jpeg;base64,' . base64_encode($img->Anh);
+                return 'data:image/jpeg;base64,' . base64_encode($img->HinhAnh);
             });
 
             $data = [

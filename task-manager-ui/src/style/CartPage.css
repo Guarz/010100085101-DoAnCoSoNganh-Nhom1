@@ -134,6 +134,16 @@
     font-weight: 800;
 }
 
+.btn-delete-item {
+  color: #6c757d; 
+  transition: all 0.2s ease-in-out; 
+}
+
+.btn-delete-item:hover {
+  color: #dc3545; 
+  transform: scale(1.1); 
+}
+
 .btn-checkout-main {
     background-color: #d81b60;
     color: white;

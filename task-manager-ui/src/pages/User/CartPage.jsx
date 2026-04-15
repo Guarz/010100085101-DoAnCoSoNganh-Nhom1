@@ -203,10 +203,22 @@ const CartPage = () => {
               <input
                 type="checkbox"
                 className="form-check-input me-2"
+                id="selectAllBottom"
                 checked={cart.length > 0 && selectedIds.length === cart.length}
                 onChange={toggleSelectAll}
+                style={{ cursor: "pointer" }}
               />
-              <span className="fw-semibold">Chọn tất cả ({cart.length})</span>
+              <label htmlFor="selectAllBottom" className="fw-semibold mb-0" style={{ cursor: "pointer" }}>
+                Chọn tất cả ({cart.length})
+              </label>
+              {selectedIds.length > 0 && (
+                <button
+                  onClick={removeSelectedItems}
+                  className="btn btn-outline-danger btn-sm rounded-pill px-3 ms-4 d-flex align-items-center"
+                >
+                  <i className="bi bi-trash3 me-1"></i> Xóa mục đã chọn
+                </button>
+              )}
             </div>
             <div className="d-flex align-items-center">
               <div className="text-end me-4">

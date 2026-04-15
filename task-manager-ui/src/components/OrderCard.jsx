@@ -121,7 +121,7 @@ const OrderCard = () => {
               <div className="card-body border-top bg-light-subtle px-4">
                 {order.chi_tiet?.map((detail, index) => {
                   const sp = detail.san_pham;
-                  const anhBase64 = sp?.anh_s_p?.[0]?.Anh;
+                  const anhBase64 = sp?.anh_s_p?.[0]?.HinhAnh;
 
                   return (
                     <div

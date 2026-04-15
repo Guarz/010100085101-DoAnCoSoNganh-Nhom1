@@ -28,7 +28,7 @@ class CartController extends Controller
                 'TenSP'   => $sp->TenSP,
                 'SoLuong' => (int)$ct->SoLuong,
                 'Gia'     => $sp->Gia,
-                'HinhAnh' => $firstImage ? 'data:image/jpeg;base64,' . base64_encode($firstImage->Anh) : null,
+                'HinhAnh' => $firstImage ? 'data:image/jpeg;base64,' . base64_encode($firstImage->HinhAnh) : null,
             ];
         });
 
@@ -38,7 +38,6 @@ class CartController extends Controller
             'products' => $items
         ]);
     }
-    /** Cập nhật số lượng sản phẩm trong giỏ */
 public function updateQty(Request $request)
 {
     $request->validate([

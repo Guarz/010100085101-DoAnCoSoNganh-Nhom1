@@ -78,7 +78,7 @@ const CartItemCard = ({
 
         <div className="col-lg-1 col-md-1 col-2 text-end">
           <button
-            className="btn btn-link text-danger p-0"
+            className="btn btn-link p-0 btn-delete-item"
             onClick={() => onRemove(item.IdSP)}
           >
             <i className="bi bi-trash3 fs-5"></i>
