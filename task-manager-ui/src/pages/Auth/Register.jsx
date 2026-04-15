@@ -27,7 +27,7 @@ const Register = () => {
         password: password,
       });
 
-      if (response.data.status === "success") {
+      if (response.data.success) {
         alert("Đăng ký thành công! Mời bạn đăng nhập.");
         navigate("/login");
       }
