@@ -412,7 +412,13 @@ function ProductManagement() {
                                     {p.image ? (
 
                                         <img
-                                            src={`data:image/jpeg;base64,${p.image}`}
+                                            src={
+                                                p.image?.startsWith("data:")
+                                                    ? p.image
+                                                    : p.image?.startsWith("/9j") // base64 jpeg thường bắt đầu vậy
+                                                        ? `data:image/jpeg;base64,${p.image}`
+                                                        : `http://localhost:8000/${p.image}` // nếu là đường dẫn file
+                                            }
                                             width="60"
                                             height="60"
                                             style={{
