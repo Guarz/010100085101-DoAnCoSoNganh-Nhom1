@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "../../style/AdminOrders.css";
 
 function AdminOrders() {
 
@@ -31,7 +32,7 @@ function AdminOrders() {
     await fetch(`http://localhost:8000/api/admin/orders/${id}/status`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ IdTT: status })
+      body: JSON.stringify({ status: status })
     });
 
     fetchOrders();
@@ -53,20 +54,17 @@ function AdminOrders() {
 
   // ================= UI =================
   return (
-    <div style={styles.page}>
+    <div className="page">
 
-      {/* BACK */}
-      <button style={styles.backBtn} onClick={() => navigate("/admin/dashboard")}>
+      <button className="backBtn" onClick={() => navigate("/admin/dashboard")}>
         ⬅ Quay lại Dashboard
       </button>
 
-      {/* TITLE */}
-      <h1 style={styles.title}>📦 Quản lý đơn hàng</h1>
+      <h1 className="title">📦 Quản lý đơn hàng</h1>
 
-      {/* CARD */}
-      <div style={styles.card}>
+      <div className="card">
 
-        <h2 style={styles.subTitle}>📋 Danh sách đơn hàng</h2>
+        <h2 className="subTitle">📋 Danh sách đơn hàng</h2>
 
         {loading ? (
           <p>Đang tải...</p>
@@ -74,10 +72,10 @@ function AdminOrders() {
           <p>Không có đơn hàng</p>
         ) : (
 
-          <table style={styles.table}>
+          <table className="table">
 
             <thead>
-              <tr style={styles.thead}>
+              <tr>
                 <th>ID</th>
                 <th>Khách hàng</th>
                 <th>Sản phẩm</th>
@@ -91,31 +89,24 @@ function AdminOrders() {
 
               {orders.map((order) => (
 
-                <tr key={order.IdDH} style={styles.row}>
+                <tr key={order.id}>
 
-                  <td>{order.IdDH}</td>
+                  <td>{order.id}</td>
 
-                  <td>{order.user?.name}</td>
+                  <td>{order.customer}</td>
 
-                  <td>
-                    {order.chi_tiet?.map((item) => (
-                      <div key={item.IdCTDH}>
-                        {item.san_pham?.TenSP} x{item.SoLuong}
-                      </div>
-                    ))}
-                  </td>
+                  <td>{order.products}</td>
 
-                  <td style={{ color: "red", fontWeight: "bold" }}>
-                    {formatMoney(order.TongTien)}
+                  <td className="money">
+                    {formatMoney(order.total)}
                   </td>
 
                   <td>
                     <select
-                      value={order.IdTT}
+                      value={order.status}
                       onChange={(e) =>
-                        changeStatus(order.IdDH, e.target.value)
+                        changeStatus(order.id, e.target.value)
                       }
-                      style={styles.select}
                     >
                       <option value={1}>Chờ xử lý</option>
                       <option value={2}>Đang giao</option>
@@ -125,7 +116,10 @@ function AdminOrders() {
                   </td>
 
                   <td>
-                    <button style={styles.deleteBtn} onClick={() => deleteOrder(order.IdDH)}>
+                    <button
+                      className="deleteBtn"
+                      onClick={() => deleteOrder(order.id)}
+                    >
                       Xóa
                     </button>
                   </td>
@@ -146,69 +140,3 @@ function AdminOrders() {
 }
 
 export default AdminOrders;
-
-
-// ================= STYLE =================
-const styles = {
-
-  page: {
-    background: "#cfe8ef",
-    minHeight: "100vh",
-    padding: 30
-  },
-
-  backBtn: {
-    background: "#ff3b6c",
-    color: "#fff",
-    border: "none",
-    padding: "10px 15px",
-    borderRadius: 8,
-    cursor: "pointer",
-    marginBottom: 20
-  },
-
-  title: {
-    fontSize: 32,
-    fontWeight: "bold",
-    marginBottom: 20
-  },
-
-  card: {
-    background: "#fff",
-    padding: 20,
-    borderRadius: 15,
-    boxShadow: "0 4px 10px rgba(0,0,0,0.1)"
-  },
-
-  subTitle: {
-    marginBottom: 15
-  },
-
-  table: {
-    width: "100%",
-    borderCollapse: "collapse"
-  },
-
-  thead: {
-    background: "#f7b2c4"
-  },
-
-  row: {
-    textAlign: "center",
-    borderBottom: "1px solid #ddd"
-  },
-
-  select: {
-    padding: 5,
-    borderRadius: 5
-  },
-
-  deleteBtn: {
-    background: "red",
-    color: "#fff",
-    border: "none",
-    padding: "6px 12px",
-    borderRadius: 5,
-    cursor: "pointer"
-  }
-};

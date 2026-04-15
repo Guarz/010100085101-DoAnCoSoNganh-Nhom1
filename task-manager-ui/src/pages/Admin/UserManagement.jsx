@@ -12,35 +12,32 @@ function UserManagement() {
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
 
-    // ========================
-    // ADD USER
-    // ========================
+    // ADD
     const [showAdd, setShowAdd] = useState(false);
     const [newName, setNewName] = useState("");
     const [newEmail, setNewEmail] = useState("");
     const [newPassword, setNewPassword] = useState("");
 
-    // ========================
-    // EDIT USER
-    // ========================
+    // EDIT
     const [editingUser, setEditingUser] = useState(null);
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
 
-    /*
-    ========================
-    LOAD USERS
-    ========================
-    */
-
+    // ========================
+    // LOAD USERS
+    // ========================
     const fetchUsers = () => {
+        setLoading(true);
+
         axios.get("http://127.0.0.1:8000/api/admin/users")
             .then(res => {
                 setUsers(res.data);
-                setLoading(false);
             })
             .catch(err => {
                 console.log(err);
+                alert("Lỗi tải dữ liệu");
+            })
+            .finally(() => {
                 setLoading(false);
             });
     };
@@ -49,12 +46,9 @@ function UserManagement() {
         fetchUsers();
     }, []);
 
-    /*
-    ========================
-    ADD USER
-    ========================
-    */
-
+    // ========================
+    // ADD USER (FIX KHÔNG CẦN F5)
+    // ========================
     const addUser = () => {
 
         if (!newName || !newEmail || !newPassword) {
@@ -67,53 +61,60 @@ function UserManagement() {
             email: newEmail,
             password: newPassword
         })
-            .then(() => {
+            .then((res) => {
+
+                const newUser = {
+                    id: res.data.id,
+                    name: newName,
+                    email: newEmail
+                };
+
+                setUsers(prev => [newUser, ...prev]); // 🔥 update UI ngay
+
                 alert("Thêm người dùng thành công");
 
                 setShowAdd(false);
                 setNewName("");
                 setNewEmail("");
                 setNewPassword("");
-
-                fetchUsers();
             })
-            .catch(() => {
-                alert("Thêm thất bại");
+            .catch((err) => {
+                const msg = err.response?.data?.message || "Thêm thất bại";
+                alert(msg);
             });
     };
 
-    /*
-    ========================
-    DELETE
-    ========================
-    */
-
+    // ========================
+    // DELETE (FIX KHÔNG CẦN F5)
+    // ========================
     const deleteUser = (id) => {
 
         if (!window.confirm("Bạn chắc chắn muốn xoá user này?")) return;
 
         axios.delete(`http://127.0.0.1:8000/api/admin/users/${id}`)
             .then(() => {
+
+                setUsers(prev => prev.filter(user => user.id !== id)); // 🔥 update UI
+
                 alert("Xoá thành công");
-                fetchUsers();
             })
             .catch(() => {
                 alert("Xoá thất bại");
             });
     };
 
-    /*
-    ========================
-    EDIT
-    ========================
-    */
-
+    // ========================
+    // EDIT
+    // ========================
     const startEdit = (user) => {
         setEditingUser(user.id);
         setName(user.name);
         setEmail(user.email);
     };
 
+    // ========================
+    // UPDATE (FIX KHÔNG CẦN F5)
+    // ========================
     const updateUser = () => {
 
         if (!name || !email) {
@@ -126,24 +127,28 @@ function UserManagement() {
             email: email
         })
             .then(() => {
+
+                setUsers(prev =>
+                    prev.map(user =>
+                        user.id === editingUser
+                            ? { ...user, name: name, email: email }
+                            : user
+                    )
+                );
+
                 alert("Cập nhật thành công");
+
                 setEditingUser(null);
-                fetchUsers();
             })
             .catch((err) => {
-
-                const errMsg = err.response?.data?.message || err.message || "Lỗi không xác định";
-
+                const errMsg = err.response?.data?.message || err.message;
                 alert("Thất bại: " + errMsg);
             });
     };
 
-    /*
-    ========================
-    SEARCH
-    ========================
-    */
-
+    // ========================
+    // SEARCH
+    // ========================
     const filteredUsers = users.filter(user =>
         user.name.toLowerCase().includes(search.toLowerCase()) ||
         user.email.toLowerCase().includes(search.toLowerCase())
@@ -185,7 +190,6 @@ function UserManagement() {
 
                     <button
                         className="reload-btn"
-                        style={{ marginLeft: "10px" }}
                         onClick={fetchUsers}
                     >
                         Reload
@@ -193,7 +197,6 @@ function UserManagement() {
 
                     <button
                         className="add-btn"
-                        style={{ marginLeft: "10px" }}
                         onClick={() => setShowAdd(!showAdd)}
                     >
                         + Thêm user
@@ -202,8 +205,7 @@ function UserManagement() {
                 </div>
             </div>
 
-
-            {/* FORM ADD USER */}
+            {/* ADD FORM */}
             {showAdd && (
 
                 <div className="edit-box">
@@ -234,17 +236,11 @@ function UserManagement() {
 
                     <div className="edit-actions">
 
-                        <button
-                            className="btn-update"
-                            onClick={addUser}
-                        >
+                        <button className="btn-update" onClick={addUser}>
                             Thêm
                         </button>
 
-                        <button
-                            className="btn-cancel"
-                            onClick={() => setShowAdd(false)}
-                        >
+                        <button className="btn-cancel" onClick={() => setShowAdd(false)}>
                             Huỷ
                         </button>
 
@@ -253,41 +249,32 @@ function UserManagement() {
                 </div>
             )}
 
-
-            {/* FORM EDIT */}
+            {/* EDIT FORM */}
             {editingUser && (
 
                 <div className="edit-box">
 
-                    <h3>Sửa thông tin người dùng</h3>
+                    <h3>Sửa thông tin</h3>
 
                     <input
                         className="edit-input"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        placeholder="Tên"
                     />
 
                     <input
                         className="edit-input"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        placeholder="Email"
                     />
 
                     <div className="edit-actions">
 
-                        <button
-                            className="btn-update"
-                            onClick={updateUser}
-                        >
+                        <button className="btn-update" onClick={updateUser}>
                             Cập nhật
                         </button>
 
-                        <button
-                            className="btn-cancel"
-                            onClick={() => setEditingUser(null)}
-                        >
+                        <button className="btn-cancel" onClick={() => setEditingUser(null)}>
                             Huỷ
                         </button>
 
@@ -296,9 +283,7 @@ function UserManagement() {
                 </div>
             )}
 
-
             {/* TABLE */}
-
             <table className="user-table">
 
                 <thead>

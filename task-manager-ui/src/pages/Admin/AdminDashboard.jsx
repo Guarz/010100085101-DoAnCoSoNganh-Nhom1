@@ -25,7 +25,7 @@ function AdminDashboard() {
         total_products: 0,
         total_categories: 0,
         total_orders: 0,
-        total_users: 0,
+        total_user: 0,
         total_revenue: 0
     });
 
@@ -44,7 +44,7 @@ function AdminDashboard() {
                 total_products: res.data.totalProducts || 0,
                 total_categories: res.data.totalCategories || 0,
                 total_orders: res.data.totalOrders || 0,
-                total_users: res.data.totalUsers || 0,
+                total_user: res.data.totalUser || 0,
                 total_revenue: res.data.totalRevenue || 0
             });
 
@@ -200,9 +200,9 @@ function AdminDashboard() {
                 <StatBox
                     icon="👤"
                     label="Người dùng"
-                    value={stats.total_users}
+                    value={stats.total_user}
                     color="#1b2559"
-                    onClick={() => navigate("/admin/users")}
+                    onClick={() => navigate("/admin/user")}
                 />
 
                 {/* 🔥 BẤM VÀO DOANH THU SẼ MỞ TRANG THỐNG KÊ */}

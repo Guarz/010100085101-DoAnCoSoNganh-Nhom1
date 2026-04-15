@@ -1,0 +1,67 @@
+.page {
+    background: #cfe8ef;
+    min-height: 100vh;
+    padding: 30px;
+}
+
+.backBtn {
+    background: #ff3b6c;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.title {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.subTitle {
+    margin-bottom: 15px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table thead {
+    background: #f7b2c4;
+}
+
+.table th,
+.table td {
+    padding: 10px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+.money {
+    color: red;
+    font-weight: bold;
+}
+
+select {
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.deleteBtn {
+    background: red;
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+}

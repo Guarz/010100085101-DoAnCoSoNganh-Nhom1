@@ -13,13 +13,13 @@ class OrderAdminController extends Controller
     public function index()
     {
         $orders = DB::table("donhang")
-            ->join("users", "donhang.IdUser", "=", "users.IdUser")
+            ->join("user", "donhang.IdUser", "=", "user.IdUser")
             ->leftJoin("chitietdonhang", "donhang.IdDH", "=", "chitietdonhang.IdDH")
             ->leftJoin("sanpham", "chitietdonhang.IdSP", "=", "sanpham.IdSP")
 
             ->select(
                 "donhang.IdDH as id",
-                "users.Ten as customer",
+                "user.Ten as customer",
                 DB::raw("GROUP_CONCAT(sanpham.TenSP SEPARATOR ', ') as products"),
                 DB::raw("SUM(chitietdonhang.TongTien) as total"),
                 "donhang.IdTT as status",
@@ -28,7 +28,7 @@ class OrderAdminController extends Controller
 
             ->groupBy(
                 "donhang.IdDH",
-                "users.Ten",
+                "user.Ten",
                 "donhang.IdTT",
                 "donhang.NgayDat"
             )
