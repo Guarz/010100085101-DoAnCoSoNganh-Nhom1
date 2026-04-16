@@ -285,7 +285,7 @@ function CategoryManagement() {
 
                 ) : (
 
-                    <table>
+                    <table className="admin-table">
 
                         <thead>
 
@@ -308,21 +308,23 @@ function CategoryManagement() {
                                     <td>{c.name}</td>
 
                                     <td>
+                                        <div className="action-cell">
 
-                                        <button
-                                            className="edit-btn"
-                                            onClick={() => handleEdit(c)}
-                                        >
-                                            Sửa
-                                        </button>
+                                            <button
+                                                className="edit-btn"
+                                                onClick={() => handleEdit(c)}
+                                            >
+                                                Sửa
+                                            </button>
 
-                                        <button
-                                            className="delete-btn"
-                                            onClick={() => handleDelete(c.id)}
-                                        >
-                                            Xóa
-                                        </button>
+                                            <button
+                                                className="delete-btn"
+                                                onClick={() => handleDelete(c.id)}
+                                            >
+                                                Xóa
+                                            </button>
 
+                                        </div>
                                     </td>
 
                                 </tr>

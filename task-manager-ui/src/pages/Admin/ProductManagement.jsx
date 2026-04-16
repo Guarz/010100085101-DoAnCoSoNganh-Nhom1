@@ -136,7 +136,7 @@ function ProductManagement() {
 
         const formData = new FormData();
 
-        formData.append("_method", "PUT"); 
+        formData.append("_method", "PUT");
         formData.append("name", product.name);
         formData.append("price", product.price);
         formData.append("description", product.shortDesc || "");
@@ -151,7 +151,7 @@ function ProductManagement() {
             const res = await fetch(
                 `http://localhost:8000/api/admin/products/${editingId}`,
                 {
-                    method: "POST", 
+                    method: "POST",
                     body: formData
                 }
             );
@@ -303,7 +303,7 @@ function ProductManagement() {
 
                 <h3>📋 Danh sách</h3>
 
-                <table>
+                <table className="admin-table">
 
                     <thead>
                         <tr>

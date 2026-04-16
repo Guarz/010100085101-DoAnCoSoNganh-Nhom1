@@ -284,7 +284,7 @@ function UserManagement() {
             )}
 
             {/* TABLE */}
-            <table className="user-table">
+            <table className="admin-table">
 
                 <thead>
                     <tr>

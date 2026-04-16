@@ -9,59 +9,65 @@
 .admin-table {
     width: 100%;
     border-collapse: collapse;
-    /* cực quan trọng */
     table-layout: auto;
-    /* cột co giãn */
     background: white;
     font-size: 16px;
 }
 
-/* HEADER */
+/* ===== HEADER ===== */
 .admin-table thead {
     background-color: #f8bbd0;
 }
 
 .admin-table th {
-    padding: 15px 20px;
-    text-align: left;
+    padding: 12px;
+    text-align: center;
     vertical-align: middle;
-    /* thẳng hàng với td */
     font-weight: 600;
     color: #333;
 }
 
-/* BODY */
+/* ===== BODY ===== */
 .admin-table td {
-    padding: 15px 20px;
-    text-align: left;
+    padding: 12px;
+    text-align: center;
     vertical-align: middle;
-    word-break: break-word;
-    height: 50px;
-    /* cố định chiều cao hàng để thẳng */
+    height: 70px;
 }
 
-/* Cột ID */
-.admin-table th:first-child,
-.admin-table td:first-child {
-    width: 80px;
-    text-align: center;
+/* ===== FIX ĐỘ RỘNG CỘT ===== */
+
+/* ẢNH */
+.admin-table th:nth-child(1),
+.admin-table td:nth-child(1) {
+    width: 90px;
 }
 
-/* Cột Hành động */
-.admin-table th:last-child,
-.admin-table td:last-child {
-    text-align: center;
+/* TÊN */
+.admin-table th:nth-child(2),
+.admin-table td:nth-child(2) {
+    width: 220px;
 }
 
-.admin-table td:last-child .edit-btn,
-.admin-table td:last-child .delete-btn {
-    display: inline-block;
-    /* Không dùng flex nữa */
-    margin: 0 4px;
-    /* Khoảng cách giữa nút */
+/* LOẠI */
+.admin-table th:nth-child(3),
+.admin-table td:nth-child(3) {
+    width: 150px;
 }
 
-/* ROW */
+/* GIÁ */
+.admin-table th:nth-child(4),
+.admin-table td:nth-child(4) {
+    width: 150px;
+}
+
+/* ACTION */
+.admin-table th:nth-child(5),
+.admin-table td:nth-child(5) {
+    width: 160px;
+}
+
+/* ===== ROW ===== */
 .admin-table tbody tr {
     border-bottom: 1px solid #eee;
 }
@@ -70,34 +76,37 @@
     background-color: #fff5f8;
 }
 
-/* ẢNH */
+/* ===== ẢNH ===== */
 .admin-table td img {
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     object-fit: cover;
     border-radius: 6px;
     display: block;
+    margin: 0 auto;
 }
 
-/* BUTTON */
+/* ===== BUTTON ===== */
+.edit-btn,
+.delete-btn {
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 2px;
+    min-width: 60px;
+
+}
+
 .edit-btn {
     background-color: #4fc3f7;
     color: white;
     border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: 0.2s;
 }
 
 .delete-btn {
     background-color: #ffcdd2;
     color: #ef5350;
     border: 1px solid #ef5350;
-    padding: 6px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: 0.2s;
 }
 
 .edit-btn:hover,
@@ -105,13 +114,22 @@
     opacity: 0.7;
 }
 
-/* RESPONSIVE */
+/* ===== ACTION CELL (QUAN TRỌNG NHẤT) ===== */
+.action-cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    height: 100%;
+}
+
+/* ===== RESPONSIVE ===== */
 @media screen and (max-width: 768px) {
 
     .admin-table th,
     .admin-table td {
-        padding: 8px 10px;
-        font-size: 14px;
+        padding: 8px;
+        font-size: 13px;
     }
 
     .admin-table td img {
@@ -121,7 +139,7 @@
 
     .edit-btn,
     .delete-btn {
-        padding: 4px 8px;
         font-size: 12px;
+        padding: 4px 8px;
     }
 }

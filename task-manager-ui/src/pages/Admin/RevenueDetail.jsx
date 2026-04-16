@@ -45,7 +45,7 @@ function RevenueDetail() {
 
             <h2 style={{ marginTop: "40px" }}>🔥 Sản phẩm bán chạy</h2>
 
-            <table className="revenue-table">
+            <table className="admin-table">
                 <thead>
                     <tr>
                         <th>Sản phẩm</th>
