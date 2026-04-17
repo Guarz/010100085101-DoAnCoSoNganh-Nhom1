@@ -5,86 +5,76 @@ import "../../style/revenue.css";
 
 function RevenueDetail() {
     const navigate = useNavigate();
+
     const [chartData, setChartData] = useState([]);
     const [topProducts, setTopProducts] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        setLoading(true);
+        const fetchAll = async () => {
+            try {
+                const [revRes, prodRes] = await Promise.all([
+                    axios.get("http://127.0.0.1:8000/api/admin/revenue-chart"),
+                    axios.get("http://127.0.0.1:8000/api/admin/top-products")
+                ]);
 
-        const fetchRevenue = axios.get("http://127.0.0.1:8000/api/admin/revenue-chart");
-        const fetchTopProducts = axios.get("http://127.0.0.1:8000/api/admin/top-products");
-
-        Promise.all([fetchRevenue, fetchTopProducts])
-            .then(([revRes, prodRes]) => {
                 setChartData(revRes.data);
                 setTopProducts(prodRes.data);
-            })
-            .catch(err => console.error("Lỗi:", err))
-            .finally(() => setLoading(false));
+            } catch (err) {
+                console.log(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchAll();
     }, []);
 
-    const formatCurrency = (amount) => {
-        return Number(amount || 0).toLocaleString('vi-VN') + " VND";
-    };
+    const formatCurrency = (amount) =>
+        Number(amount || 0).toLocaleString("vi-VN") + " VND";
 
     if (loading) {
-        return (
-            <div className="loading-state">
-                <h3>Đang tải...</h3>
-            </div>
-        );
+        return <div className="loading">⏳ Đang tải...</div>;
     }
 
     return (
-        <div className="admin-container">
+        <div className="revenue-container">
 
             {/* HEADER */}
-            <div className="admin-header shadow-sm">
-                <button
-                    className="back-btn-modern"
-                    onClick={() => navigate(-1)}
-                >
-                    <i className="bi bi-arrow-left"></i> Quay lại
+            <div className="header">
+                <button onClick={() => navigate(-1)}>
+                    <i className="bi bi-arrow-left"></i>
                 </button>
 
-                <h2 className="admin-title">
+                <h2>
+                    <i className="bi bi-bar-chart"></i>
                     Thống kê doanh thu
                 </h2>
             </div>
 
-            {/* CONTENT */}
-            <div className="admin-content-grid">
+            <div className="grid">
 
                 {/* ===== DOANH THU ===== */}
-                <div className="admin-card">
-                    <div className="card-header-title">
-                        <h3>Doanh thu theo tháng</h3>
-                    </div>
+                <div className="card">
+                    <h3>
+                        <i className="bi bi-graph-up"></i>
+                        Doanh thu theo tháng
+                    </h3>
 
-                    <table className="modern-table">
-
-                        {/* 🔥 FIX CHUẨN */}
-                        <colgroup>
-                            <col style={{ width: "40%" }} />
-                            <col style={{ width: "60%" }} />
-                        </colgroup>
-
+                    <table className="table">
                         <thead>
                             <tr>
-                                <th>THÁNG</th>
-                                <th className="text-right">DOANH THU</th>
+                                <th>Tháng</th>
+                                <th className="right">Doanh thu</th>
                             </tr>
                         </thead>
 
                         <tbody>
-                            {chartData.map(item => (
-                                <tr key={item.month}>
-                                    <td>
-                                        <strong>Tháng {item.month}</strong>
-                                    </td>
+                            {chartData.map((item, index) => (
+                                <tr key={index}>
+                                    <td>Tháng {item.month}</td>
 
-                                    <td className="text-right price-highlight">
+                                    <td className="right money">
                                         {formatCurrency(item.revenue)}
                                     </td>
                                 </tr>
@@ -94,40 +84,35 @@ function RevenueDetail() {
                 </div>
 
                 {/* ===== TOP PRODUCT ===== */}
-                <div className="admin-card">
-                    <div className="card-header-title">
-                        <h3>Sản phẩm bán chạy</h3>
-                    </div>
+                <div className="card">
+                    <h3>
+                        <i className="bi bi-star"></i>
+                        Sản phẩm bán chạy
+                    </h3>
 
-                    <table className="modern-table">
-
-                        {/* 🔥 FIX CHUẨN */}
-                        <colgroup>
-                            <col style={{ width: "40%" }} />
-                            <col style={{ width: "20%" }} />
-                            <col style={{ width: "40%" }} />
-                        </colgroup>
-
+                    <table className="table">
                         <thead>
                             <tr>
-                                <th>SẢN PHẨM</th>
-                                <th className="text-center">ĐÃ BÁN</th>
-                                <th className="text-right">DOANH THU</th>
+                                <th>Sản phẩm</th>
+                                <th className="center">Đã bán</th>
+                                <th className="right">Doanh thu</th>
                             </tr>
                         </thead>
 
                         <tbody>
                             {topProducts.map((p, index) => (
                                 <tr key={index}>
-                                    <td>{p.name}</td>
+                                    <td>
+                                        #{index + 1} {p.name}
+                                    </td>
 
-                                    <td className="text-center">
-                                        <span className="modern-badge">
+                                    <td className="center">
+                                        <span className="badge">
                                             {p.sold}
                                         </span>
                                     </td>
 
-                                    <td className="text-right price-highlight">
+                                    <td className="right money">
                                         {formatCurrency(p.revenue)}
                                     </td>
                                 </tr>

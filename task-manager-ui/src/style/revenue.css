@@ -1,157 +1,130 @@
-/* ================= CONTAINER ================= */
-.admin-container {
-    padding: 25px;
-    background-color: #e0f7f9 !important;
+/* ===== CONTAINER ===== */
+.revenue-container {
+    padding: 20px;
+    background: linear-gradient(135deg, #eef2ff, #f8fafc);
     min-height: 100vh;
 }
 
-/* ================= HEADER ================= */
-.admin-header {
-    background: white;
-    padding: 15px 25px;
-    border-radius: 12px;
+/* ===== HEADER ===== */
+.header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
     margin-bottom: 25px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
 }
 
-.admin-title {
-    margin: 0;
-    color: #2b3674;
+.header button {
+    border: none;
+    background: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.header h2 {
     font-size: 22px;
+    margin: 0;
+    color: #4f46e5;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
 }
 
-/* ================= GRID ================= */
-.admin-content-grid {
+/* ===== GRID ===== */
+.grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 25px;
+    gap: 20px;
 }
 
-/* ================= CARD ================= */
-.admin-card {
+/* ===== CARD ===== */
+.card {
     background: white;
-    border-radius: 16px;
-    padding: 20px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-
-    max-height: 500px;
-    overflow-y: scroll;
-
-    /* giữ layout không bị giật */
-    scrollbar-gutter: stable;
+    border-radius: 14px;
+    padding: 18px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    transition: 0.2s;
 }
 
-/* Scroll đẹp */
-.admin-card::-webkit-scrollbar {
-    width: 6px;
+.card:hover {
+    transform: translateY(-3px);
 }
 
-.admin-card::-webkit-scrollbar-thumb {
-    background: #ccc;
-    border-radius: 10px;
+.card h3 {
+    margin-bottom: 12px;
+    font-size: 16px;
+    color: #374151;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
-/* ================= TITLE ================= */
-.card-header-title h3 {
-    font-size: 18px;
-    color: #2b3674;
-    margin-bottom: 20px;
-}
-
-/* ================= TABLE ================= */
-.modern-table {
+/* ===== TABLE ===== */
+.table {
     width: 100%;
     border-collapse: collapse;
     table-layout: fixed;
-    /* giữ ổn định */
 }
 
-/* FIX padding */
-.modern-table th,
-.modern-table td {
-    padding: 14px 18px;
+/* CELL */
+.table th,
+.table td {
+    padding: 10px;
     border-bottom: 1px solid #f1f1f1;
-    box-sizing: border-box;
+    vertical-align: middle;
 }
 
-/* Header */
-.modern-table thead th {
-    background-color: #fbc2d4 !important;
-    color: #555 !important;
+/* 🎀 HEADER BẢNG (MÀU HỒNG NHẸ) */
+.table th {
+    background: linear-gradient(135deg, #f8bbd0, #f48fb1);
+    color: white;
     font-size: 13px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    border-bottom: 2px solid #ec407a;
 }
 
-/* Hover */
-.modern-table tbody tr:hover {
-    background-color: #f9fafb;
+/* ROW HOVER */
+.table tbody tr:hover {
+    background: #f9fafb;
 }
 
-/* ================= ALIGN ================= */
-.text-center {
+/* ===== ALIGN ===== */
+.center {
     text-align: center;
 }
 
-.text-right {
+.right {
     text-align: right;
 }
 
-/* ================= PRICE ================= */
-.price-highlight {
-    text-align: right;
+/* ===== MONEY ===== */
+.money {
     font-weight: 700;
-    color: #4318ff;
+    color: #7c3aed;
+    /* giữ tím cho đẹp */
     white-space: nowrap;
 }
 
-/* ================= BADGE ================= */
-.modern-badge {
-    background-color: #e1f5fe;
-    color: #03a9f4;
-    padding: 4px 12px;
-    border-radius: 50px;
-    font-weight: 600;
-    font-size: 13px;
-}
-
-/* ================= BUTTON ================= */
-.back-btn-modern {
-    background-color: #f0f2f5;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-weight: 600;
-    color: #555;
-    transition: 0.3s;
-    margin-right: 15px;
-    cursor: pointer;
-}
-
-.back-btn-modern:hover {
-    background-color: #ff2d55;
+/* ===== BADGE ===== */
+.badge {
+    background: linear-gradient(135deg, #06b6d4, #3b82f6);
     color: white;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
 }
 
-/* ================= LOADING ================= */
-.loading-state {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 60vh;
+/* ===== LOADING ===== */
+.loading {
+    text-align: center;
+    margin-top: 50px;
     font-size: 18px;
-    font-weight: 600;
-    color: #555;
 }
 
-/* ================= RESPONSIVE ================= */
-@media (max-width: 1100px) {
-    .admin-content-grid {
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+    .grid {
         grid-template-columns: 1fr;
     }
 }

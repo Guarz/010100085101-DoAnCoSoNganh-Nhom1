@@ -45,13 +45,13 @@ function AdminDashboard() {
             const res = await axios.get("http://127.0.0.1:8000/api/admin/revenue-chart");
             setChartData(res.data.map(item => ({
                 name: "T" + item.month,
+                month: item.month, // 🔥 thêm cái này
                 revenue: Number(item.revenue)
             })));
         } catch (error) { console.log(error); }
     };
 
     useEffect(() => {
-        // ... (Giữ nguyên logic kiểm tra đăng nhập của bạn)
         const loadAll = async () => {
             await loadDashboard();
             await loadChart();
@@ -64,6 +64,15 @@ function AdminDashboard() {
         if (!window.confirm("Bạn có chắc chắn muốn đăng xuất không?")) return;
         localStorage.removeItem("user");
         window.location.href = "/admin/login";
+    };
+
+    // 🔥 CLICK VÀO CỘT
+    const handleBarClick = (data) => {
+        // nếu muốn truyền tháng thì dùng dòng dưới
+        navigate(`/admin/revenue?month=${data.month}`);
+
+        // nếu không cần thì dùng:
+        // navigate("/admin/revenue");
     };
 
     if (loading) return <div className="dashboard-loading"><div className="spinner"></div></div>;
@@ -82,45 +91,16 @@ function AdminDashboard() {
             </header>
 
             <div className="dashboard-grid">
-                <StatBox
-                    iconClass="bi bi-box-seam"
-                    label="Sản phẩm"
-                    value={stats.total_products}
-                    color="#4318FF"
-                    onClick={() => navigate("/admin/products")}
-                />
-                <StatBox
-                    iconClass="bi bi-tags"
-                    label="Danh mục"
-                    value={stats.total_categories}
-                    color="#6AD2FF"
-                    onClick={() => navigate("/admin/categories")}
-                />
-                <StatBox
-                    iconClass="bi bi-cart-check"
-                    label="Đơn hàng"
-                    value={stats.total_orders}
-                    color="#FF4081"
-                    onClick={() => navigate("/admin/orders")}
-                />
-                <StatBox
-                    iconClass="bi bi-people"
-                    label="Người dùng"
-                    value={stats.total_user}
-                    color="#1B2559"
-                    onClick={() => navigate("/admin/user")}
-                />
-                <StatBox
-                    iconClass="bi bi-cash-stack"
-                    label="Doanh thu"
-                    value={stats.total_revenue}
-                    color="#00C853"
-                    onClick={() => navigate("/admin/revenue")}
-                />
+                <StatBox iconClass="bi bi-box-seam" label="Sản phẩm" value={stats.total_products} color="#4318FF" onClick={() => navigate("/admin/products")} />
+                <StatBox iconClass="bi bi-tags" label="Danh mục" value={stats.total_categories} color="#6AD2FF" onClick={() => navigate("/admin/categories")} />
+                <StatBox iconClass="bi bi-cart-check" label="Đơn hàng" value={stats.total_orders} color="#FF4081" onClick={() => navigate("/admin/orders")} />
+                <StatBox iconClass="bi bi-people" label="Người dùng" value={stats.total_user} color="#1B2559" onClick={() => navigate("/admin/user")} />
+                <StatBox iconClass="bi bi-cash-stack" label="Doanh thu" value={stats.total_revenue} color="#00C853" onClick={() => navigate("/admin/revenue")} />
             </div>
 
             <div className="chart-box">
                 <h3 className="chart-title">Thống kê doanh thu theo tháng</h3>
+
                 <div className="chart-container">
                     <ResponsiveContainer width="100%" height={350}>
                         <BarChart data={chartData}>
@@ -128,7 +108,16 @@ function AdminDashboard() {
                             <XAxis dataKey="name" />
                             <YAxis tickFormatter={(v) => v.toLocaleString()} />
                             <Tooltip formatter={(v) => v.toLocaleString() + " đ"} />
-                            <Bar dataKey="revenue" fill="#4318FF" radius={[6, 6, 0, 0]} barSize={45} />
+
+                            {/* 🔥 GẮN CLICK Ở ĐÂY */}
+                            <Bar
+                                dataKey="revenue"
+                                fill="#4318FF"
+                                radius={[6, 6, 0, 0]}
+                                barSize={45}
+                                onClick={(data) => handleBarClick(data)}
+                                style={{ cursor: "pointer" }}
+                            />
                         </BarChart>
                     </ResponsiveContainer>
                 </div>

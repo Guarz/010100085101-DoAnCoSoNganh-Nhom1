@@ -92,8 +92,8 @@ table {
 }
 
 th {
-    background: #f7f9fc;
-    color: #a3aed0;
+    background: linear-gradient(135deg, #f8bbd0, #f48fb1);
+    color: white;
     font-size: 13px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
