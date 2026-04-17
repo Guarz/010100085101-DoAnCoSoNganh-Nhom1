@@ -1,348 +1,147 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import "../../style/product.css";
 import "../../style/category.css";
-import "../../style/table.css";
+
 function CategoryManagement() {
-
     const navigate = useNavigate();
-
     const [categories, setCategories] = useState([]);
     const [name, setName] = useState("");
     const [editingId, setEditingId] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    /*
-    =========================
-    LOAD DATA
-    =========================
-    */
-
     const fetchCategories = async () => {
-
         try {
-
             setLoading(true);
-
             const res = await fetch("http://localhost:8000/api/admin/categories");
             const data = await res.json();
-
             setCategories(Array.isArray(data) ? data : []);
-
         } catch (err) {
-
             console.log("Lỗi load danh mục:", err);
-            alert("Không thể tải dữ liệu");
-
         } finally {
-
             setLoading(false);
-
         }
-
     };
 
     useEffect(() => {
-
         fetchCategories();
-
     }, []);
 
-    /*
-    =========================
-    RESET
-    =========================
-    */
-
     const resetForm = () => {
-
         setName("");
         setEditingId(null);
-
     };
 
-    /*
-    =========================
-    ADD
-    =========================
-    */
-
-    const handleAdd = async () => {
-
+    const handleSubmit = async () => {
         if (!name.trim()) {
-
-            alert("Nhập tên danh mục");
+            alert("Vui lòng nhập tên danh mục");
             return;
-
         }
+        const method = editingId ? "PUT" : "POST";
+        const url = editingId
+            ? `http://localhost:8000/api/admin/categories/${editingId}`
+            : "http://localhost:8000/api/admin/categories";
 
         try {
-
-            const res = await fetch("http://localhost:8000/api/admin/categories", {
-
-                method: "POST",
-
-                headers: {
-                    "Content-Type": "application/json"
-                },
-
+            const res = await fetch(url, {
+                method: method,
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ name })
-
             });
-
             const data = await res.json();
-
             if (data.success) {
-
-                alert("Thêm thành công 🎉");
-
                 fetchCategories();
                 resetForm();
-
-            } else {
-
-                alert("Thêm thất bại");
-
             }
-
         } catch (err) {
-
-            console.log(err);
             alert("Lỗi kết nối server");
-
         }
-
     };
-
-    /*
-    =========================
-    EDIT
-    =========================
-    */
 
     const handleEdit = (c) => {
-
         setName(c.name);
         setEditingId(c.id);
-
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-        });
-
+        window.scrollTo({ top: 0, behavior: "smooth" });
     };
-
-    /*
-    =========================
-    UPDATE
-    =========================
-    */
-
-    const handleUpdate = async () => {
-
-        if (!name.trim()) {
-
-            alert("Nhập tên danh mục");
-            return;
-
-        }
-
-        try {
-
-            const res = await fetch(`http://localhost:8000/api/admin/categories/${editingId}`, {
-
-                method: "PUT",
-
-                headers: {
-                    "Content-Type": "application/json"
-                },
-
-                body: JSON.stringify({ name })
-
-            });
-
-            const data = await res.json();
-
-            if (data.success) {
-
-                alert("Cập nhật thành công");
-
-                fetchCategories();
-                resetForm();
-
-            } else {
-
-                alert("Cập nhật thất bại");
-
-            }
-
-        } catch (err) {
-
-            console.log(err);
-            alert("Lỗi server");
-
-        }
-
-    };
-
-    /*
-    =========================
-    DELETE
-    =========================
-    */
 
     const handleDelete = async (id) => {
-
         if (!window.confirm("Bạn có chắc muốn xóa?")) return;
-
         try {
-
-            const res = await fetch(`http://localhost:8000/api/admin/categories/${id}`, {
-
-                method: "DELETE"
-
-            });
-
-            const data = await res.json();
-
-            if (data.success) {
-
-                alert("Đã xóa");
-
-                fetchCategories();
-
-            } else {
-
-                alert("Xóa thất bại");
-
-            }
-
+            await fetch(`http://localhost:8000/api/admin/categories/${id}`, { method: "DELETE" });
+            fetchCategories();
         } catch (err) {
-
             console.log(err);
-            alert("Lỗi server");
-
         }
-
     };
 
     return (
-
-        <div className="category-page">
-
-            {/* BACK BUTTON */}
-
-            <button
-                className="back-btn"
-                onClick={() => navigate("/admin/dashboard")}
-            >
-                ⬅ Quay lại Dashboard
+        <div className="product-page">
+            <button className="back-btn" onClick={() => navigate("/admin/dashboard")}>
+                <i className="bi bi-arrow-left"></i> Quay lại Dashboard
             </button>
 
-            <h2>📂 Quản lý danh mục</h2>
+            {/* CẬP NHẬT ICON TIÊU ĐỀ TRANG */}
+            <h2 className="title">
+                <i className="bi bi-tags-fill me-2"></i> Quản lý danh mục
+            </h2>
 
-            {/* FORM */}
-
-            <div className="category-card">
-
-                <input
-                    placeholder="Tên danh mục"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                />
-
-                <button onClick={editingId ? handleUpdate : handleAdd}>
-
-                    {editingId ? "Cập nhật" : "Thêm danh mục"}
-
-                </button>
-
-                {editingId && (
-
-                    <button
-                        style={{ marginLeft: 10, background: "gray", color: "white" }}
-                        onClick={resetForm}
-                    >
-                        Hủy
+            <div className="product-card">
+                <div className="form-grid" style={{ gridTemplateColumns: "1fr" }}>
+                    <input
+                        placeholder="Ví dụ: Áo sơ mi, Quần Jean..."
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                    />
+                </div>
+                <div className="form-actions">
+                    <button className="add-btn" onClick={handleSubmit}>
+                        {editingId ? "CẬP NHẬT DANH MỤC" : "THÊM DANH MỤC MỚI"}
                     </button>
-
-                )}
-
+                    {editingId && (
+                        <button className="cancel-btn" onClick={resetForm}>HỦY</button>
+                    )}
+                </div>
             </div>
 
-            {/* LIST */}
+            <div className="product-list">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+                    {/* CẬP NHẬT ICON TIÊU ĐỀ DANH SÁCH */}
+                    <h3 style={{ margin: 0 }}>
+                        <i className="bi bi-list-task me-2"></i> Danh sách hiện có
+                    </h3>
+                    <span className="total-badge">Tổng số: {categories.length}</span>
+                </div>
 
-            <div className="category-list">
-
-                <h3>📋 Danh sách danh mục</h3>
-
-                {loading ? (
-
-                    <p>⏳ Đang tải...</p>
-
-                ) : categories.length === 0 ? (
-
-                    <p>Chưa có danh mục</p>
-
-                ) : (
-
-                    <table className="admin-table">
-
-                        <thead>
-
-                            <tr>
-                                <th>ID</th>
-                                <th>Tên</th>
-                                <th>Hành động</th>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style={{ width: '15%' }}>ID</th>
+                            <th style={{ width: '65%' }}>Tên danh mục</th>
+                            <th style={{ width: '20%', textAlign: 'center' }}>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {categories.map((c) => (
+                            <tr key={c.id}>
+                                <td className="id-cell">#{c.id}</td>
+                                <td className="name-cell">{c.name}</td>
+                                <td>
+                                    <div className="action-btns">
+                                        <button className="btn-icon edit" onClick={() => handleEdit(c)}>
+                                            <i className="bi bi-pencil-square"></i>
+                                        </button>
+                                        <button className="btn-icon delete" onClick={() => handleDelete(c.id)}>
+                                            <i className="bi bi-trash3"></i>
+                                        </button>
+                                    </div>
+                                </td>
                             </tr>
-
-                        </thead>
-
-                        <tbody>
-
-                            {categories.map((c) => (
-
-                                <tr key={c.id}>
-
-                                    <td>{c.id}</td>
-
-                                    <td>{c.name}</td>
-
-                                    <td>
-                                        <div className="action-cell">
-
-                                            <button
-                                                className="edit-btn"
-                                                onClick={() => handleEdit(c)}
-                                            >
-                                                Sửa
-                                            </button>
-
-                                            <button
-                                                className="delete-btn"
-                                                onClick={() => handleDelete(c.id)}
-                                            >
-                                                Xóa
-                                            </button>
-
-                                        </div>
-                                    </td>
-
-                                </tr>
-
-                            ))}
-
-                        </tbody>
-
-                    </table>
-
-                )}
-
+                        ))}
+                    </tbody>
+                </table>
             </div>
-
         </div>
-
     );
-
 }
 
 export default CategoryManagement;

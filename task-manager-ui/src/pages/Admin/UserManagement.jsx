@@ -2,335 +2,163 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../../style/userManagement.css";
-import "../../style/table.css";
 
 function UserManagement() {
-
     const navigate = useNavigate();
-
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
 
-    // ADD
     const [showAdd, setShowAdd] = useState(false);
     const [newName, setNewName] = useState("");
     const [newEmail, setNewEmail] = useState("");
     const [newPassword, setNewPassword] = useState("");
 
-    // EDIT
     const [editingUser, setEditingUser] = useState(null);
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
 
-    // ========================
-    // LOAD USERS
-    // ========================
     const fetchUsers = () => {
         setLoading(true);
-
         axios.get("http://127.0.0.1:8000/api/admin/users")
-            .then(res => {
-                setUsers(res.data);
-            })
-            .catch(err => {
-                console.log(err);
-                alert("Lỗi tải dữ liệu");
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+            .then(res => { setUsers(res.data); })
+            .catch(() => { alert("Lỗi tải dữ liệu"); })
+            .finally(() => { setLoading(false); });
     };
 
-    useEffect(() => {
-        fetchUsers();
-    }, []);
+    useEffect(() => { fetchUsers(); }, []);
 
-    // ========================
-    // ADD USER (FIX KHÔNG CẦN F5)
-    // ========================
     const addUser = () => {
-
-        if (!newName || !newEmail || !newPassword) {
-            alert("Vui lòng nhập đủ thông tin");
-            return;
-        }
-
-        axios.post("http://127.0.0.1:8000/api/admin/users", {
-            name: newName,
-            email: newEmail,
-            password: newPassword
-        })
+        if (!newName || !newEmail || !newPassword) return alert("Vui lòng nhập đủ thông tin");
+        axios.post("http://127.0.0.1:8000/api/admin/users", { name: newName, email: newEmail, password: newPassword })
             .then((res) => {
-
-                const newUser = {
-                    id: res.data.id,
-                    name: newName,
-                    email: newEmail
-                };
-
-                setUsers(prev => [newUser, ...prev]); // 🔥 update UI ngay
-
-                alert("Thêm người dùng thành công");
-
+                setUsers(prev => [{ id: res.data.id, name: newName, email: newEmail }, ...prev]);
+                alert("Thêm thành công");
                 setShowAdd(false);
-                setNewName("");
-                setNewEmail("");
-                setNewPassword("");
+                setNewName(""); setNewEmail(""); setNewPassword("");
             })
-            .catch((err) => {
-                const msg = err.response?.data?.message || "Thêm thất bại";
-                alert(msg);
-            });
+            .catch(err => alert(err.response?.data?.message || "Thêm thất bại"));
     };
 
-    // ========================
-    // DELETE (FIX KHÔNG CẦN F5)
-    // ========================
     const deleteUser = (id) => {
-
         if (!window.confirm("Bạn chắc chắn muốn xoá user này?")) return;
-
         axios.delete(`http://127.0.0.1:8000/api/admin/users/${id}`)
             .then(() => {
-
-                setUsers(prev => prev.filter(user => user.id !== id)); // 🔥 update UI
-
+                setUsers(prev => prev.filter(u => u.id !== id));
                 alert("Xoá thành công");
-            })
-            .catch(() => {
-                alert("Xoá thất bại");
             });
     };
 
-    // ========================
-    // EDIT
-    // ========================
     const startEdit = (user) => {
         setEditingUser(user.id);
         setName(user.name);
         setEmail(user.email);
+        setShowAdd(false);
+        window.scrollTo({ top: 0, behavior: "smooth" });
     };
 
-    // ========================
-    // UPDATE (FIX KHÔNG CẦN F5)
-    // ========================
     const updateUser = () => {
-
-        if (!name || !email) {
-            alert("Vui lòng nhập đủ tên và email");
-            return;
-        }
-
-        axios.put(`http://127.0.0.1:8000/api/admin/users/${editingUser}`, {
-            name: name,
-            email: email
-        })
+        axios.put(`http://127.0.0.1:8000/api/admin/users/${editingUser}`, { name, email })
             .then(() => {
-
-                setUsers(prev =>
-                    prev.map(user =>
-                        user.id === editingUser
-                            ? { ...user, name: name, email: email }
-                            : user
-                    )
-                );
-
+                setUsers(prev => prev.map(u => u.id === editingUser ? { ...u, name, email } : u));
                 alert("Cập nhật thành công");
-
                 setEditingUser(null);
             })
-            .catch((err) => {
-                const errMsg = err.response?.data?.message || err.message;
-                alert("Thất bại: " + errMsg);
-            });
+            .catch(err => alert("Lỗi: " + err.message));
     };
 
-    // ========================
-    // SEARCH
-    // ========================
-    const filteredUsers = users.filter(user =>
-        user.name.toLowerCase().includes(search.toLowerCase()) ||
-        user.email.toLowerCase().includes(search.toLowerCase())
+    const filteredUsers = users.filter(u =>
+        u.name.toLowerCase().includes(search.toLowerCase()) ||
+        u.email.toLowerCase().includes(search.toLowerCase())
     );
 
-    if (loading) {
-        return <h3 style={{ textAlign: "center" }}>Đang tải dữ liệu...</h3>;
-    }
+    if (loading) return <div className="loading-state"><h3 style={{ textAlign: 'center', marginTop: '50px' }}>Đang tải dữ liệu...</h3></div>;
 
     return (
-
         <div className="user-container">
-
-            {/* HEADER */}
-            <div className="user-header">
-
-                <div>
-                    <button
-                        className="back-btn"
-                        onClick={() => navigate("/admin/dashboard")}
-                    >
-                        ← Quay lại
+            <div className="user-header shadow-sm">
+                <div className="header-left">
+                    <button className="back-btn" onClick={() => navigate("/admin/dashboard")}>
+                        <i className="bi bi-arrow-left"></i> Quay lại
                     </button>
-
-                    <span className="user-title">
-                        👤 Quản lý người dùng
-                    </span>
+                    <h2 className="user-title">
+                        <i className="bi bi-people-fill" style={{ color: '#4318ff' }}></i> Quản lý người dùng
+                    </h2>
                 </div>
 
-                <div>
-
-                    <input
-                        type="text"
-                        placeholder="Tìm kiếm user..."
-                        className="search-box"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                    />
-
-                    <button
-                        className="reload-btn"
-                        onClick={fetchUsers}
-                    >
-                        Reload
+                <div className="header-right">
+                    <div className="search-wrapper">
+                        <i className="bi bi-search"></i>
+                        <input
+                            type="text"
+                            placeholder="Tìm kiếm user..."
+                            className="search-box"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                        />
+                    </div>
+                    <button className="reload-btn" onClick={fetchUsers} title="Làm mới">
+                        <i className="bi bi-arrow-clockwise"></i>
                     </button>
-
-                    <button
-                        className="add-btn"
-                        onClick={() => setShowAdd(!showAdd)}
-                    >
-                        + Thêm user
+                    <button className="add-btn-main" onClick={() => { setShowAdd(!showAdd); setEditingUser(null) }}>
+                        <i className="bi bi-person-plus-fill"></i> Thêm user
                     </button>
-
                 </div>
             </div>
 
-            {/* ADD FORM */}
-            {showAdd && (
-
-                <div className="edit-box">
-
-                    <h3>Thêm người dùng</h3>
-
-                    <input
-                        className="edit-input"
-                        placeholder="Tên"
-                        value={newName}
-                        onChange={(e) => setNewName(e.target.value)}
-                    />
-
-                    <input
-                        className="edit-input"
-                        placeholder="Email"
-                        value={newEmail}
-                        onChange={(e) => setNewEmail(e.target.value)}
-                    />
-
-                    <input
-                        className="edit-input"
-                        placeholder="Mật khẩu"
-                        type="password"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                    />
-
-                    <div className="edit-actions">
-
-                        <button className="btn-update" onClick={addUser}>
-                            Thêm
-                        </button>
-
-                        <button className="btn-cancel" onClick={() => setShowAdd(false)}>
-                            Huỷ
-                        </button>
-
+            {(showAdd || editingUser) && (
+                <div className="edit-box shadow-sm">
+                    <h3>
+                        <i className={editingUser ? "bi bi-pencil-square" : "bi bi-person-plus"}></i>
+                        {editingUser ? " Cập nhật thông tin" : " Thêm người dùng mới"}
+                    </h3>
+                    <div className="form-grid-user">
+                        <input className="edit-input" placeholder="Tên người dùng" value={editingUser ? name : newName} onChange={(e) => editingUser ? setName(e.target.value) : setNewName(e.target.value)} />
+                        <input className="edit-input" placeholder="Email" value={editingUser ? email : newEmail} onChange={(e) => editingUser ? setEmail(e.target.value) : setNewEmail(e.target.value)} />
+                        {!editingUser && <input className="edit-input" type="password" placeholder="Mật khẩu" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />}
                     </div>
-
+                    <div className="edit-actions">
+                        <button className="btn-update" onClick={editingUser ? updateUser : addUser}>Xác nhận</button>
+                        <button className="btn-cancel" onClick={() => { setShowAdd(false); setEditingUser(null); }}>Hủy</button>
+                    </div>
                 </div>
             )}
 
-            {/* EDIT FORM */}
-            {editingUser && (
-
-                <div className="edit-box">
-
-                    <h3>Sửa thông tin</h3>
-
-                    <input
-                        className="edit-input"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                    />
-
-                    <input
-                        className="edit-input"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-
-                    <div className="edit-actions">
-
-                        <button className="btn-update" onClick={updateUser}>
-                            Cập nhật
-                        </button>
-
-                        <button className="btn-cancel" onClick={() => setEditingUser(null)}>
-                            Huỷ
-                        </button>
-
-                    </div>
-
+            <div className="table-card shadow-sm">
+                <div className="list-header" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
+                    <h3><i className="bi bi-list-stars"></i> Danh sách thành viên</h3>
+                    <span className="total-badge">Tổng: {filteredUsers.length}</span>
                 </div>
-            )}
-
-            {/* TABLE */}
-            <table className="admin-table">
-
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Tên</th>
-                        <th>Email</th>
-                        <th>Hành động</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-
-                    {filteredUsers.map(user => (
-
-                        <tr key={user.id} className="table-row">
-
-                            <td>{user.id}</td>
-                            <td>{user.name}</td>
-                            <td>{user.email}</td>
-
-                            <td>
-
-                                <button
-                                    className="edit-btn"
-                                    onClick={() => startEdit(user)}
-                                >
-                                    Sửa
-                                </button>
-
-                                <button
-                                    className="delete-btn"
-                                    onClick={() => deleteUser(user.id)}
-                                >
-                                    Xoá
-                                </button>
-
-                            </td>
-
+                <table className="admin-table">
+                    <thead>
+                        <tr>
+                            <th style={{ width: "10%" }}>ID</th>
+                            <th style={{ width: "30%" }}>Tên</th>
+                            <th style={{ width: "35%" }}>Email</th>
+                            <th style={{ width: "25%", textAlign: "center" }}>Hành động</th>
                         </tr>
-
-                    ))}
-
-                </tbody>
-
-            </table>
-
+                    </thead>
+                    <tbody>
+                        {filteredUsers.map(user => (
+                            <tr key={user.id}>
+                                <td><strong>#{user.id}</strong></td>
+                                <td>{user.name}</td>
+                                <td>{user.email}</td>
+                                <td className="action-column">
+                                    <div className="action-btns">
+                                        <button className="btn-icon edit" onClick={() => startEdit(user)} title="Sửa">
+                                            <i className="bi bi-pencil-square"></i>
+                                        </button>
+                                        <button className="btn-icon delete" onClick={() => deleteUser(user.id)} title="Xóa">
+                                            <i className="bi bi-trash3"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 }

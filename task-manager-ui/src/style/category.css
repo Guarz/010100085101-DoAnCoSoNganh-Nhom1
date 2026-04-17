@@ -1,129 +1,162 @@
 .category-page {
     padding: 30px;
-    background: #e0f7fa;
+    background: #f4f7fe;
+    /* Màu nền nhẹ hơn cho sang trọng */
     min-height: 100vh;
+}
+
+.page-title {
+    color: #2b3674;
+    margin-bottom: 25px;
+    font-weight: 700;
 }
 
 /* 🔙 NÚT QUAY LẠI */
 .back-btn {
     margin-bottom: 20px;
-    padding: 10px 15px;
-    background: #e91e63;
-    color: white;
-    border: none;
-    border-radius: 8px;
+    padding: 10px 18px;
+    background: white;
+    color: #2b3674;
+    border: 1px solid #e0e5f2;
+    border-radius: 12px;
     cursor: pointer;
-    font-weight: bold;
-    transition: 0.3s;
+    font-weight: 600;
+    transition: 0.3s ease;
 }
 
 .back-btn:hover {
-    background: #c2185b;
-    transform: scale(1.05);
+    background: #f1f4f9;
 }
 
 /* CARD FORM */
 .category-card {
     background: white;
-    padding: 20px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+    padding: 25px;
+    border-radius: 15px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.input-group {
+    display: flex;
+    gap: 12px;
 }
 
 .category-card input {
-    padding: 10px;
-    width: 220px;
-    margin-right: 10px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    transition: 0.3s;
+    flex: 1;
+    padding: 12px 15px;
+    border-radius: 10px;
+    border: 1px solid #e0e5f2;
+    font-size: 15px;
 }
 
-.category-card input:focus {
-    outline: none;
-    border-color: #e91e63;
-    box-shadow: 0 0 5px rgba(233, 30, 99, 0.3);
-}
-
-.category-card button {
-    padding: 10px 15px;
-    background: #4caf50;
+.submit-btn {
+    background: #4318ff;
     color: white;
     border: none;
-    border-radius: 8px;
+    padding: 0 25px;
+    border-radius: 10px;
+    font-weight: 600;
     cursor: pointer;
-    transition: 0.3s;
 }
 
-.category-card button:hover {
-    background: #388e3c;
+.cancel-btn {
+    background: #8f9bba;
+    color: white;
+    border: none;
+    padding: 0 20px;
+    border-radius: 10px;
+    cursor: pointer;
 }
 
-/* LIST */
+/* LIST & TABLE */
 .category-list {
     background: white;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
+    table-layout: fixed;
+    /* Cực kỳ quan trọng để hàng không bị lệch */
 }
 
 th {
-    background: #f8bbd0;
+    background: #f7f9fc;
+    color: #a3aed0;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 th,
 td {
-    padding: 12px;
-    border-bottom: 1px solid #ddd;
+    padding: 18px 15px;
+    border-bottom: 1px solid #f1f4f9;
+    text-align: left;
+    /* Căn lề trái cho tên dễ đọc */
+    vertical-align: middle;
+}
+
+/* Độ rộng cột */
+.col-id {
+    width: 15%;
     text-align: center;
 }
 
-/* BUTTONS */
-.edit-btn {
-    background: orange;
-    color: white;
+.col-name {
+    width: 60%;
+    font-weight: 500;
+}
+
+.col-action {
+    width: 25%;
+    text-align: center;
+}
+
+/* ICON BUTTONS */
+.btn-icon {
+    width: 36px;
+    height: 36px;
     border: none;
-    padding: 5px 10px;
-    border-radius: 6px;
-    margin-right: 5px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: 0.3s;
-}
-
-.edit-btn:hover {
-    opacity: 0.8;
-    transform: scale(1.05);
-}
-
-.delete-btn {
-    background: red;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.delete-btn:hover {
-    opacity: 0.8;
-    transform: scale(1.05);
-}
-
-/* TABLE ROW HOVER */
-tr:hover {
-    background: #f1f1f1;
-}
-
-td:last-child {
-    display: flex;
-    justify-content: center;
+    display: inline-flex;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
+    margin: 0 4px;
+    transition: 0.2s;
+}
+
+.btn-icon.edit {
+    background: #eef2ff;
+    color: #4318ff;
+}
+
+.btn-icon.delete {
+    background: #fff5f5;
+    color: #ff5b5b;
+}
+
+.btn-icon:hover {
+    transform: translateY(-2px);
+}
+
+.count-badge {
+    background: #e1e9ff;
+    color: #4318ff;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
 }

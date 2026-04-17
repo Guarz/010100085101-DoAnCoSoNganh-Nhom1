@@ -1,43 +1,176 @@
-.revenue-page {
-    padding: 30px;
+/* ================= CONTAINER ================= */
+.admin-container {
+    padding: 25px;
+    background-color: #e0f7f9 !important;
     min-height: 100vh;
-    background-color: #f5f5f5;
-    font-family: Arial, sans-serif;
 }
 
-.back-btn {
+/* ================= HEADER ================= */
+.admin-header {
+    background: white;
+    padding: 15px 25px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.admin-title {
+    margin: 0;
+    color: #2b3674;
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* ================= GRID ================= */
+.admin-content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+}
+
+/* ================= CARD ================= */
+.admin-card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    max-height: 500px;
+    /* scroll ở đây */
+    overflow-y: auto;
+    /* ✅ scroll card thay vì table */
+}
+
+.card-header-title h3 {
+    font-size: 18px;
+    color: #2b3674;
     margin-bottom: 20px;
-    padding: 10px 15px;
-    background-color: #e91e63;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-.back-btn:hover {
-    background-color: #d81b60;
-}
-
-.revenue-page h2 {
-    margin-bottom: 15px;
-    color: #333;
-}
-
-.revenue-table {
+/* ================= TABLE ================= */
+.modern-table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 30px;
+    table-layout: auto;
+    /* giống product */
 }
 
-.revenue-table th,
-.revenue-table td {
-    border: 1px solid #ccc;
-    padding: 10px;
+/* Header */
+.modern-table thead th {
+    background-color: #fbc2d4 !important;
+    color: #555 !important;
+    padding: 14px 18px;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Body */
+.modern-table tbody td {
+    padding: 14px 18px;
+    border-bottom: 1px solid #f1f1f1;
+    color: #444;
+    vertical-align: middle;
+}
+
+/* Hover */
+.modern-table tbody tr:hover {
+    background-color: #f9fafb;
+}
+
+/* ================= FIX WIDTH (QUAN TRỌNG) ================= */
+
+/* Bảng 1: Doanh thu */
+.admin-card:first-child .modern-table th:nth-child(1),
+.admin-card:first-child .modern-table td:nth-child(1) {
+    width: 40%;
     text-align: center;
 }
 
-.revenue-table th {
-    background-color: #f0f0f0;
+.admin-card:first-child .modern-table th:nth-child(2),
+.admin-card:first-child .modern-table td:nth-child(2) {
+    width: 60%;
+    text-align: right;
+}
+
+/* Bảng 2: Top sản phẩm */
+.admin-card:last-child .modern-table th:nth-child(1),
+.admin-card:last-child .modern-table td:nth-child(1) {
+    width: 40%;
+}
+
+.admin-card:last-child .modern-table th:nth-child(2),
+.admin-card:last-child .modern-table td:nth-child(2) {
+    width: 20%;
+    text-align: center;
+}
+
+.admin-card:last-child .modern-table th:nth-child(3),
+.admin-card:last-child .modern-table td:nth-child(3) {
+    width: 40%;
+    text-align: right;
+}
+
+/* ================= TEXT ================= */
+.text-center {
+    text-align: center;
+}
+
+/* ================= PRICE ================= */
+.price-highlight {
+    color: #4318ff;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* ================= BADGE ================= */
+.modern-badge {
+    background-color: #e1f5fe;
+    color: #03a9f4;
+    padding: 4px 12px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+/* ================= BUTTON ================= */
+.back-btn-modern {
+    background-color: #f0f2f5;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    color: #555;
+    transition: 0.3s;
+    margin-right: 15px;
+    cursor: pointer;
+}
+
+.back-btn-modern:hover {
+    background-color: #ff2d55;
+    color: white;
+}
+
+/* ================= LOADING ================= */
+.loading-state {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 60vh;
+    font-size: 18px;
+    font-weight: 600;
+    color: #555;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 1100px) {
+    .admin-content-grid {
+        grid-template-columns: 1fr;
+    }
 }

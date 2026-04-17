@@ -1,68 +1,102 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "../../style/revenue.css"; // Đường dẫn đúng với cấu trúc của bạn
+import "../../style/revenue.css";
 
 function RevenueDetail() {
     const navigate = useNavigate();
     const [chartData, setChartData] = useState([]);
     const [topProducts, setTopProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        axios.get("http://127.0.0.1:8000/api/admin/revenue-chart")
-            .then(res => setChartData(res.data))
-            .catch(err => console.error(err));
+        setLoading(true);
+        const fetchRevenue = axios.get("http://127.0.0.1:8000/api/admin/revenue-chart");
+        const fetchTopProducts = axios.get("http://127.0.0.1:8000/api/admin/top-products");
 
-        axios.get("http://127.0.0.1:8000/api/admin/top-products")
-            .then(res => setTopProducts(res.data))
-            .catch(err => console.error(err));
+        Promise.all([fetchRevenue, fetchTopProducts])
+            .then(([revRes, prodRes]) => {
+                setChartData(revRes.data);
+                setTopProducts(prodRes.data);
+            })
+            .catch(err => console.error("Lỗi:", err))
+            .finally(() => setLoading(false));
     }, []);
 
+    const formatCurrency = (amount) => {
+        return Number(amount).toLocaleString('vi-VN') + " VND";
+    };
+
+    if (loading) return <div className="loading-state"><h3>Đang tải...</h3></div>;
+
     return (
-        <div className="revenue-page">
-            <button className="back-btn" onClick={() => navigate(-1)}>
-                🔙 Quay lại
-            </button>
+        <div className="admin-container">
+            <div className="admin-header shadow-sm">
+                <button className="back-btn-modern" onClick={() => navigate(-1)}>
+                    <i className="bi bi-arrow-left"></i> Quay lại
+                </button>
+                <h2 className="admin-title">Thống kê doanh thu</h2>
+            </div>
 
-            <h2>📊 Thống kê doanh thu</h2>
+            <div className="admin-content-grid">
 
-            <table className="revenue-table">
-                <thead>
-                    <tr>
-                        <th>Tháng</th>
-                        <th>Doanh thu</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {chartData.map(item => (
-                        <tr key={item.month}>
-                            <td>{item.month}</td>
-                            <td>{item.revenue.toLocaleString()} VND</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+                {/* DOANH THU */}
+                <div className="admin-card">
+                    <div className="card-header-title">
+                        <h3>Doanh thu theo tháng</h3>
+                    </div>
 
-            <h2 style={{ marginTop: "40px" }}>🔥 Sản phẩm bán chạy</h2>
+                    <table className="modern-table">
+                        <thead>
+                            <tr>
+                                <th>THÁNG</th>
+                                <th>DOANH THU</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {chartData.map(item => (
+                                <tr key={item.month}>
+                                    <td><strong>Tháng {item.month}</strong></td>
+                                    <td className="price-highlight">
+                                        {formatCurrency(item.revenue)}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
 
-            <table className="admin-table">
-                <thead>
-                    <tr>
-                        <th>Sản phẩm</th>
-                        <th>Số lượng bán</th>
-                        <th>Doanh thu</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {topProducts.map((p, index) => (
-                        <tr key={index}>
-                            <td>{p.name}</td>
-                            <td>{p.sold}</td>
-                            <td>{p.revenue.toLocaleString()} VND</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+                {/* TOP PRODUCT */}
+                <div className="admin-card">
+                    <div className="card-header-title">
+                        <h3>Sản phẩm bán chạy</h3>
+                    </div>
+
+                    <table className="modern-table">
+                        <thead>
+                            <tr>
+                                <th>SẢN PHẨM</th>
+                                <th>ĐÃ BÁN</th>
+                                <th>DOANH THU</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {topProducts.map((p, index) => (
+                                <tr key={index}>
+                                    <td>{p.name}</td>
+                                    <td className="text-center">
+                                        <span className="modern-badge">{p.sold}</span>
+                                    </td>
+                                    <td className="price-highlight">
+                                        {formatCurrency(p.revenue)}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
         </div>
     );
 }
