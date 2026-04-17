@@ -38,45 +38,54 @@
     border-radius: 16px;
     padding: 20px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+
     max-height: 500px;
-    /* scroll ở đây */
-    overflow-y: auto;
-    /* ✅ scroll card thay vì table */
+    overflow-y: scroll;
+
+    /* giữ layout không bị giật */
+    scrollbar-gutter: stable;
 }
 
+/* Scroll đẹp */
+.admin-card::-webkit-scrollbar {
+    width: 6px;
+}
+
+.admin-card::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 10px;
+}
+
+/* ================= TITLE ================= */
 .card-header-title h3 {
     font-size: 18px;
     color: #2b3674;
     margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
 }
 
 /* ================= TABLE ================= */
 .modern-table {
     width: 100%;
     border-collapse: collapse;
-    table-layout: auto;
-    /* giống product */
+    table-layout: fixed;
+    /* giữ ổn định */
+}
+
+/* FIX padding */
+.modern-table th,
+.modern-table td {
+    padding: 14px 18px;
+    border-bottom: 1px solid #f1f1f1;
+    box-sizing: border-box;
 }
 
 /* Header */
 .modern-table thead th {
     background-color: #fbc2d4 !important;
     color: #555 !important;
-    padding: 14px 18px;
     font-size: 13px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-}
-
-/* Body */
-.modern-table tbody td {
-    padding: 14px 18px;
-    border-bottom: 1px solid #f1f1f1;
-    color: #444;
-    vertical-align: middle;
 }
 
 /* Hover */
@@ -84,48 +93,20 @@
     background-color: #f9fafb;
 }
 
-/* ================= FIX WIDTH (QUAN TRỌNG) ================= */
-
-/* Bảng 1: Doanh thu */
-.admin-card:first-child .modern-table th:nth-child(1),
-.admin-card:first-child .modern-table td:nth-child(1) {
-    width: 40%;
-    text-align: center;
-}
-
-.admin-card:first-child .modern-table th:nth-child(2),
-.admin-card:first-child .modern-table td:nth-child(2) {
-    width: 60%;
-    text-align: right;
-}
-
-/* Bảng 2: Top sản phẩm */
-.admin-card:last-child .modern-table th:nth-child(1),
-.admin-card:last-child .modern-table td:nth-child(1) {
-    width: 40%;
-}
-
-.admin-card:last-child .modern-table th:nth-child(2),
-.admin-card:last-child .modern-table td:nth-child(2) {
-    width: 20%;
-    text-align: center;
-}
-
-.admin-card:last-child .modern-table th:nth-child(3),
-.admin-card:last-child .modern-table td:nth-child(3) {
-    width: 40%;
-    text-align: right;
-}
-
-/* ================= TEXT ================= */
+/* ================= ALIGN ================= */
 .text-center {
     text-align: center;
 }
 
+.text-right {
+    text-align: right;
+}
+
 /* ================= PRICE ================= */
 .price-highlight {
-    color: #4318ff;
+    text-align: right;
     font-weight: 700;
+    color: #4318ff;
     white-space: nowrap;
 }
 
